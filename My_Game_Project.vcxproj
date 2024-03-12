@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseObject.cpp" />
+    <ClCompile Include="BulletObject.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="FigureObject.cpp" />
     <ClCompile Include="main.cpp" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseObject.h" />
+    <ClInclude Include="BulletObject.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="FigureObject.h" />
     <ClInclude Include="SkillsObject.h" />

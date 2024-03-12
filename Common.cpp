@@ -54,8 +54,29 @@ SDL_Texture* loadText(std::string text, SDL_Renderer* renderer) {
     return textTexture;
 }
 
-void renderBkGround(SDL_Renderer* renderer) {
-    SDL_Texture* bkGround = loadImage("BkGround.png", renderer);
-    SDL_RenderCopy(renderer, bkGround, NULL, NULL);
-    SDL_RenderPresent(renderer);
+
+Mix_Chunk* loadAudio(std::string audioPath) {
+    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
+        return nullptr;
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return nullptr;
+    }
+
+    Mix_Chunk* sound = Mix_LoadWAV(audioPath.c_str());
+    if (sound == nullptr) {
+        std::cerr << "Failed to load sound effect! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return nullptr;
+    }
+    return sound;
+}
+
+bool checkCollision(SDL_Rect a, SDL_Rect b) {
+    if (a.x + a.w >= b.x && b.x + b.w >= a.x && a.y + a.h >= b.y && b.y + b.h >= a.y) {
+        return true;
+    }
+    return false;
 }

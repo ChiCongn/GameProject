@@ -3,6 +3,8 @@
 #define BSEOBJECT_H
 #include"Common.h"
 
+const bool DIRECTON_LEFT = true;
+const bool DIRECTION_RIGHT = false;
 
 class BaseObject {
 protected:
@@ -16,7 +18,7 @@ public:
 	void setCoordinates(int _x, int _y) { coordinates.x = _x, coordinates.y = _y; }
 	SDL_Rect getCoordinates() { return coordinates; }
 	void setSpeed(int _speed) { speed = _speed; }
-	void render(SDL_Renderer* renderer);
+	virtual void render(SDL_Renderer* renderer);
 };
 
 

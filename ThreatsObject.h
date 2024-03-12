@@ -4,24 +4,28 @@
 #define THREATSOBJECT_H
 
 #include"BaseObject.h"
+#include"SkillsObject.h"
 #include<vector>
 #include<ctime>
 #include<cstdlib>
 
-const int B52_WIDTH = 100;
-const int B52_HEIGHT = 60;
+const int ZOMBIE_WIDTH = 80;
+const int ZOMBIE_HEIGHT = 120;
+const int MAX_HP = 10;
 
 class ThreatsObject :public BaseObject {
-	const std::vector<int> RANDOMCOORDINATES_X={ 30, 50, 73, 974, 465, 874, 747, 36, 847, 135, 564 };
-	const int sizeX = RANDOMCOORDINATES_X.size();
-	const std::vector<int> RANDOMCOORDINATES_Y = { 0, 65, 73, 674, 474, 767, 636, 467, 476, 685, 494 };
-	const int sizeY = RANDOMCOORDINATES_Y.size();
+	int hp;
 public:
 	ThreatsObject();
 	~ThreatsObject();	
+	bool isDied() { return hp == 0; }
 	void setTexture(SDL_Renderer* renderer);
-	void autoMove();
-	void attackPlayer();
-	
+	void render(SDL_Renderer* renderer) override;
+	void autoMove(int x, int y);
+	void attackPlayer(SDL_Renderer* renderer);
+	void renderAttack(SDL_Renderer* renderer);
+	void getDamage() { hp--; }
+	void getDamageLightning() { hp -= MAX_HP; }
+	void recover() { hp = MAX_HP; }
 };
 #endif

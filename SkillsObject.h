@@ -1,33 +1,28 @@
 #pragma once
 #include"BaseObject.h"
+#include"ThreatsObject.h"
+#include<vector>
 
 #ifndef SKILLSOBJECT_H
 #define SKILLSOBJECT_H
 
-const int BULLET_WIDTH = 10;
-const int BULLET_HEIGHT = 10;
-const int ROCKET_WIDTH = 20;
-const int ROCKET_HEIGHT = 30;
-const int BULLET = 10;
-const int ROCKET = 8;
+const int LIGHTNING_WIDTH = 40;
+const int LINGHTNING_HEIGHT = 80;
+const int WAITING_TIME = 400;
 
 class SkillObject : public BaseObject {
+	int waitedTime;
 	
-	bool isFire;
-	bool fireLeft;
-
 public:
-	
+	bool usedSkill;
 	SkillObject();
 	~SkillObject();
 
-	//void setTextureBullet(SDL_Renderer*renderer);
-	//void setCoordinatesBullet(SDL_Renderer* renderer);
-
-	void setFireLeft(bool direction) { fireLeft = direction; }
-	void initializeBullet(SDL_Rect mainCoordinates, SDL_Renderer* renderer);
-	void move();
-	void renderBullet(SDL_Renderer* renderer);
+	void setCoordinatesBullet(SDL_Renderer* renderer);
+	void setTextureSkill(SDL_Renderer* renderer);
+	void countdownSkill();
+	bool readySkill() { return (waitedTime == 0); }
+	void render(SDL_Renderer* renderer) override;
 };
 
 #endif

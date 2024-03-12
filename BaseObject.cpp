@@ -13,7 +13,6 @@ BaseObject::~BaseObject() {
 	}
 }
 
-void BaseObject::render(SDL_Renderer* renderer) {
-	SDL_RenderCopy(renderer, texture, NULL, &coordinates);
-	SDL_RenderPresent(renderer);
+void BaseObject:: render(SDL_Renderer* renderer) {
+	SDL_RenderCopy(renderer, texture, NULL, &coordinates);	
 }

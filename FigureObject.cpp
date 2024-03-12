@@ -11,20 +11,35 @@ FigureObject::FigureObject() {
 	isFire = false;
 	directionLeft = true;
 	texture = nullptr;
+	textureRight = nullptr;
 }
 
 FigureObject::~FigureObject() {
+	for (auto it : bullet) {
+		it.~BulletObject();
+	}
+	lightning.~SkillObject();
 	if (texture != nullptr) {
 		SDL_DestroyTexture(texture);
 	}
+	if (textureRight != nullptr) {
+		SDL_DestroyTexture(textureRight);
+	}
 }
 
-void FigureObject::updateTexture(SDL_Renderer* renderer) {
+void FigureObject::setTextureFigure(SDL_Renderer* renderer) {	
+	texture = loadImage("catLeft.jpg", renderer);	
+	textureRight = loadImage("catRight.jpg", renderer);	
+	lightning.setTextureSkill(renderer);
+}
+
+void FigureObject::render(SDL_Renderer* renderer) {
 	if (directionLeft) {
-		texture = loadImage("TankLeft.jpg", renderer);
+		SDL_RenderCopy(renderer, texture, NULL, &coordinates);
 	}
-	else texture = loadImage("TankRight.jpg", renderer);
-	
+	else {
+		SDL_RenderCopy(renderer, textureRight, NULL, &coordinates);
+	}
 }
 
 void FigureObject::handleMoveAction(SDL_Event&e) {
@@ -44,6 +59,18 @@ void FigureObject::handleMoveAction(SDL_Event&e) {
 				coordinates.x += speed;
 			break;
 
+		case SDLK_UP:
+			coordinates.y -= speed;
+			if (coordinates.y < 0)
+				coordinates.y += speed;
+			break;
+
+		case SDLK_DOWN:
+			coordinates.y += speed;
+			if (coordinates.y+FIGURE_HEIGHT > SCREEN_HEIGHT)
+				coordinates.y -= speed;
+			break;
+
 		default:
 			break;
 		}
@@ -55,9 +82,11 @@ void FigureObject::handleMoveAction(SDL_Event&e) {
 void FigureObject::renderAttack(SDL_Renderer* renderer) {		
 	if (isFire) {
 		for (int i = 0; i < bullet.size(); ++i) {
-			bullet[i].renderBullet(renderer);
+			bullet[i].setTextureBullet( renderer);
+			bullet[i].render(renderer);			
 			bullet[i].move();			
-			if (bullet[i].getCoordinates().x+BULLET_WIDTH > SCREEN_WIDTH || bullet[i].getCoordinates().x<0 || bullet[i].getCoordinates().y<0) {
+			if (bullet[i].getCoordinates().x+BULLET_WIDTH > SCREEN_WIDTH || bullet[i].getCoordinates().x<0 || bullet[i].getCoordinates().y<0) {				
+				Mix_FreeChunk(bullet[i].sound);
 				bullet.erase(bullet.begin() + i);
 			}
 		}
@@ -68,17 +97,34 @@ void FigureObject::attackThreats(SDL_Event&e, SDL_Renderer* renderer) {
 	if (e.type == SDL_KEYDOWN) {
 		if (e.key.keysym.sym == SDLK_SPACE) {
 			isFire = true;
-			SkillObject newBullet;
-			//newBullet.setCoordinates(30, 300);
+			BulletObject newBullet;
+			
 			if (directionLeft) {
-				newBullet.setCoordinates(getCoordinates().x, getCoordinates().y);
-				newBullet.setFireLeft(true);
+				newBullet.setCoordinates(getCoordinates().x, getCoordinates().y+39);
+				newBullet.setDirectionBullet(DIRECTON_LEFT);
 			}
 			else {
-				newBullet.setCoordinates(getCoordinates().x + FIGURE_WIDTH, getCoordinates().y);
-				newBullet.setFireLeft(false);
+				newBullet.setCoordinates(getCoordinates().x + FIGURE_WIDTH, getCoordinates().y+39);
+				newBullet.setDirectionBullet(DIRECTION_RIGHT);
 			}
+			//newBullet.setAudio();
+			//Mix_PlayChannel(-1,newBullet.sound, 0);
 			bullet.push_back(newBullet);
 		}
 	}	
+}
+
+void FigureObject::setCoordinatesSkill(SDL_Event& e) {	
+	lightning.countdownSkill();
+	if (e.type == SDL_MOUSEBUTTONDOWN) {
+		int mouseX, mouseY;
+		SDL_GetMouseState(&mouseX, &mouseY);
+		lightning.setCoordinates(mouseX, mouseY-LINGHTNING_HEIGHT/2);
+	}			
+}
+
+void FigureObject::renderSkill(SDL_Renderer* renderer) {
+	//if (lightning.usedSkill) {
+		lightning.render(renderer);
+	//}
 }

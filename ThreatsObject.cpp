@@ -4,10 +4,11 @@
 ThreatsObject::ThreatsObject() {
 	coordinates.x = 0;
 	coordinates.y = 0;
-	coordinates.w = B52_WIDTH;
-	coordinates.h = B52_HEIGHT;
+	coordinates.w = ZOMBIE_WIDTH;
+	coordinates.h = ZOMBIE_HEIGHT;
 	texture = nullptr;
-	speed = B52_WIDTH/4;
+	speed = 8;
+	hp = MAX_HP;
 }
 
 ThreatsObject::~ThreatsObject() {
@@ -17,20 +18,27 @@ ThreatsObject::~ThreatsObject() {
 }
 
 void ThreatsObject::setTexture(SDL_Renderer* renderer) {
-	texture = loadImage("B52Right.jpg", renderer);
+	texture = loadImage("zombie.jpg", renderer);
 }
 
+void ThreatsObject::render(SDL_Renderer* renderer) {
+	SDL_RenderCopy(renderer, texture, NULL, &coordinates);
+}
 
-void ThreatsObject::autoMove() {
-	//coordinates.x = RANDOMCOORDINATES_X[rand()%sizeX];
-	//coordinates.y = RANDOMCOORDINATES_Y[rand() % sizeY];	
-	coordinates.x += speed;
-	if (coordinates.x + B52_WIDTH > SCREEN_WIDTH) {
-		coordinates.x = 2;
+void ThreatsObject::autoMove(int x, int y) {
+	int x_val= (coordinates.x - x)/20;
+	coordinates.x -= x_val;
+	int y_val= (y - coordinates.y)/20;
+	coordinates.y -= y_val;
+	if (coordinates.x + ZOMBIE_WIDTH > SCREEN_WIDTH) {
+		coordinates.x = 0;
 	}	
 }
 
+void ThreatsObject::renderAttack(SDL_Renderer* renderer) {
+	;
+}
 
-void ThreatsObject::attackPlayer() {
+void ThreatsObject::attackPlayer(SDL_Renderer* renderer) {
 	;
 }
