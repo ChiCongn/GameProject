@@ -2,6 +2,7 @@
 #include"BaseObject.h"
 
 BaseObject::BaseObject() {
+	speed = 0;
 	coordinates.x = 0;
 	coordinates.y = 0;
 	texture = nullptr;
@@ -14,6 +15,3 @@ BaseObject::~BaseObject() {
 	}
 }
 
-void BaseObject::render(SDL_Renderer* renderer) {
-	SDL_RenderCopy(renderer, texture, NULL, &coordinates);
-}

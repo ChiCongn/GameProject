@@ -1,12 +1,12 @@
 
 #include"ObstacleObject.h"
 
-void ObstacleObject::intialize(int _x, int _y, int _w, int _h, std::string path, SDL_Renderer* renderer) {
-	coordinates.x = _x;
-	coordinates.y = _y;
-	coordinates.w = _w;
-	coordinates.h = _h;
-	texture = loadImage(path, renderer);
+void ObstacleObject::initializeObstacle(SDL_Rect rect, SDL_Renderer* renderer) {
+	coordinates.x = rect.x;
+	coordinates.y = rect.y;
+	coordinates.w = rect.w;
+	coordinates.h = rect.h;
+	texture = loadImage("./Image\\Obstacle.png",renderer);
 	speed = 0;
 }
 
@@ -15,4 +15,8 @@ ObstacleObject::~ObstacleObject() {
 		SDL_DestroyTexture(texture);
 		texture = nullptr;
 	}
+}
+
+void ObstacleObject::renderObstacle(SDL_Renderer* renderer) {
+	SDL_RenderCopy(renderer, texture, NULL, &coordinates);
 }

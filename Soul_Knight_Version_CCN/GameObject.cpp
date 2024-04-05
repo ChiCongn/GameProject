@@ -2,48 +2,88 @@
 #include"GameObject.h"
 #include<string>
 
-void GameObject::initSDL() {
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-        logSDLError(std::cout, "SDL_Init", true);
-
-    window = SDL_CreateWindow(WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
-    if (window == nullptr) logSDLError(std::cout, "CreateWindow", true);
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED |
-        SDL_RENDERER_PRESENTVSYNC);
-
-    if (renderer == nullptr) logSDLError(std::cout, "CreateRenderer", true);
-
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-}
-
-void GameObject::initializeGame() {
-    player->intialize(renderer);
+void GameObject::initializeGame(SDL_Renderer* renderer) {
+    std::cout << " start initGame\n";
+    gameState = GameState::Play;
+    map = loadImage(MAP_PATH, renderer);
+    player->initializePlayer(renderer);
+    for (int i = 0; i < 12; i++) {
+        obstacle[i].initializeObstacle(obstaclePos[i], renderer);
+    }
     for (int i = 0; i < AMOUNT_NORMAL_MONSTER; i++) {
-        normalMonster[i].initNormalMonster(3,4,renderer);
+        normalMonster[i].initNormalMonster(PosXListNormalMonster[i],PosYListNormalMonster[i],BULLET_NORMAL_MONSTER_PATH, renderer);
     }
     for (int i = 0; i < AMOUNT_LAZER_MONSTER; i++) {
-        lazerMonster[i].initLazerMonster(3,4,renderer);
+        lazerMonster[i].initLazerMonster(PosXListLazerMonster[i], PosYListLazerMonster[i], renderer);
     }
+    std::cout << "ok initGame\n";
+}
+
+GameObject::GameObject(SDL_Renderer* renderer) {
+    initializeGame(renderer);
 }
 
 GameObject::~GameObject() {
+    if (map != nullptr) {
+        SDL_DestroyTexture(map);
+        map = nullptr;
+    }
     player->~PlayerObject();
+    delete[] player;
     for (int i = 0; i < AMOUNT_NORMAL_MONSTER; i++) {
         normalMonster[i].~NormalMonster();
     }
+    delete[] normalMonster;
     for (int i = 0; i < AMOUNT_LAZER_MONSTER; i++) {
         lazerMonster[i].~LazerMonster();
     }
+    delete[] lazerMonster;
+    std::cout << "ok ~Game";
+}
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+void GameObject::renderGame(SDL_Renderer* renderer) {
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, map, NULL, NULL);
+    //std::cout << "start renderGame\n";
+    player->renderPlayer(renderer);
+    for (int i = 0; i < AMOUNT_NORMAL_MONSTER; i++) {
+        for (int j = 0; j < AMOUNT_BULLET_NORMAL_MONSTER; j++) {
+            normalMonster[i].normalMonsterBullet[j].BulletMove();
+        }
+        normalMonster[i].render(renderer);
+    }
+    for (int i = 0; i < AMOUNT_LAZER_MONSTER; i++) {
+        lazerMonster[i].render(renderer);
+    }
+    /*for (int i = 0; i < 12; i++) {
+        obstacle[i].renderObstacle(renderer);
+    }*/
+    //std::cout << "ok renderGame\n";
+    SDL_RenderPresent(renderer);
+}
 
-    Mix_Quit();
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
+void GameObject::gamePlay(SDL_Event& e, SDL_Renderer* renderer) {
+    while (!player->isDead()) {
+        while (SDL_PollEvent(&e) != 0) {
+            if (e.type == SDL_QUIT) {
+                gameState = GameState::Quit;
+                break;
+            }
+            else if (e.type == SDL_KEYDOWN) {
+                //std::cout << "start gamePlay\n";
+                player->playerMove(e, obstaclePos);
+            }
+            else {
+                ;
+            }
+        }        
+        for (int i = 0; i < AMOUNT_NORMAL_MONSTER; i++) {
+            normalMonster[i].normalMonsterMove(obstaclePos);
+        }
+        /*for (int i = 0; i < AMOUNT_LAZER_MONSTER; i++) {
+            lazerMonster[i].render(renderer);
+        }*/
+        renderGame(renderer);
+        SDL_Delay(20);
+    }     
 }

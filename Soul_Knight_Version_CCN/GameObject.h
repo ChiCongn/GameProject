@@ -7,36 +7,22 @@
 #include"ObstacleObject.h"
 #include"Defs.h"
 
-#define AMOUNT_NORMAL_MONSTER  8
-#define AMOUNT_LAZER_MONSTER  6
-const std::string WINDOW_TITLE = "CCN";
-
-void logSDLError(std::ostream& os,
-	const std::string& msg, bool fatal)
-{
-	os << msg << " Error: " << SDL_GetError() << std::endl;
-	if (fatal) {
-		SDL_Quit();
-		exit(1);
-	}
-}
-
-class GameObject {	
-	PlayerObject* player;
+class GameObject {		
+	SDL_Texture* map;
+	PlayerObject* player=new PlayerObject;
+	ObstacleObject* obstacle = new ObstacleObject[12];
 	NormalMonster* normalMonster=new NormalMonster[AMOUNT_NORMAL_MONSTER];
-	ThreatObject* boss;
+	//ThreatObject* boss;
 	LazerMonster* lazerMonster=new LazerMonster[AMOUNT_LAZER_MONSTER];
 public:
 	GameState gameState;
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-
-	void initSDL();
-	void initializeGame();
+	void initializeGame(SDL_Renderer* renderer);
+	GameObject(SDL_Renderer* renderer);
 	~GameObject();
 	void gameIntro();
-	void gamePlay();
+	void gamePlay(SDL_Event& e, SDL_Renderer* renderer);
 	void gameOver();
+	void renderGame(SDL_Renderer* renderer);
 };
 
 
