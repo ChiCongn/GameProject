@@ -6,8 +6,7 @@
 	coordinates.y = 0;
 	coordinates.w = 0;
 	coordinates.h = 0;
-	texture = nullptr;
-	textureRight = nullptr;
+	sprite - new AnimatedSprite;
 	direction = Direction::West;
 	speed = 0;
 	damage = 0;
@@ -21,14 +20,7 @@ ThreatObject::~ThreatObject() {
 }
 
 void ThreatObject::destructThreat() {
-	if (texture != nullptr) {
-		SDL_DestroyTexture(texture);
-		texture = nullptr;
-	}
-	if (textureRight != nullptr) {
-		SDL_DestroyTexture(textureRight);
-		textureRight = nullptr;
-	}
+	sprite->~AnimatedSprite();
 	if (AttackPlayerAudio != nullptr) {
 		Mix_FreeChunk(AttackPlayerAudio);
 		AttackPlayerAudio = nullptr;
@@ -47,8 +39,7 @@ void NormalMonster::initNormalMonster(int _x, int _y,std::string bulletPath, SDL
 	coordinates.x = _x, coordinates.y = _y;
 	coordinates.w = NORMAL_MONSTER_WIDTH;
 	coordinates.h = NORMAL_MONSTER_HEIGHT;
-	texture = loadImage(NORMAL_MONSTER_LEFT_PATH, renderer);
-	textureRight = loadImage(NORMAL_MONSTER_RIGHT_PATH, renderer);
+	sprite->initAnimatedSprite(NORMAL_MONSTER_PATH, NORMAL_MONSTER_FRAMES, NORMAL_MONSTER_CLIPS, renderer);
 	for (int i = 0; i < AMOUNT_BULLET_NORMAL_MONSTER/4 ; i++) {
 		normalMonsterBullet[i].initialize(BULLET_NORMAL_MONSTER_PATH, SPEED_NORMAL_MONSTER_BULLET,Direction::NorthWest, renderer);
 		normalMonsterBullet[i].setCoordinates(coordinates.x, coordinates.y);
@@ -59,7 +50,6 @@ void NormalMonster::initNormalMonster(int _x, int _y,std::string bulletPath, SDL
 		normalMonsterBullet[i].initialize(BULLET_NORMAL_MONSTER_PATH, SPEED_NORMAL_MONSTER_BULLET, Direction::NorthEast, renderer);
 		normalMonsterBullet[i].setCoordinates(coordinates.x + NORMAL_MONSTER_WIDTH, coordinates.y);
 		normalMonsterBullet[i].setSizeBullet(BULLET_NORMAL_MONSTER_WIDTH, BULLET_NORMAL_MONSTER_HEIGHT);
-		std::cout << "ok set bullet normal monster with Northwest direction\n";
 	}
 	for (int i = AMOUNT_BULLET_NORMAL_MONSTER / 2; i < 3*AMOUNT_BULLET_NORMAL_MONSTER / 4; i++) {
 		normalMonsterBullet[i].initialize(BULLET_NORMAL_MONSTER_PATH, SPEED_NORMAL_MONSTER_BULLET, Direction::SouthEast, renderer);
@@ -75,6 +65,8 @@ void NormalMonster::initNormalMonster(int _x, int _y,std::string bulletPath, SDL
 }
 
 NormalMonster::~NormalMonster() {
+	delete[] normalMonsterBullet;
+	//std::cout << "delete normalMonsterBullet pointer\n";
 	destructThreat();
 }
 
@@ -103,10 +95,10 @@ void NormalMonster::normalMonsterMove(const SDL_Rect obstaclePos[]) {
 
 void NormalMonster::render(SDL_Renderer* renderer) {
 	if (direction == Direction::West) {
-		SDL_RenderCopy(renderer, texture, NULL, &coordinates);
+		sprite->renderAnimatedSprite(renderer, coordinates, SDL_FLIP_HORIZONTAL);
 	}
 	else {
-		SDL_RenderCopy(renderer, textureRight, NULL, &coordinates);
+		sprite->renderAnimatedSprite(renderer, coordinates, SDL_FLIP_NONE);
 	}
 	for (int i = 0; i < AMOUNT_BULLET_NORMAL_MONSTER / 4; i++) {
 		normalMonsterBullet[i].renderBullet(renderer);
@@ -123,6 +115,21 @@ void NormalMonster::render(SDL_Renderer* renderer) {
 	}
 }
 
+void NormalMonster::setNewTurnBullet() {
+	for (int i = 0; i < AMOUNT_BULLET_NORMAL_MONSTER / 4; i++) {
+		normalMonsterBullet[i].setCoordinates(coordinates.x, coordinates.y);	
+	}
+	for (int i = AMOUNT_BULLET_NORMAL_MONSTER / 4; i < AMOUNT_BULLET_NORMAL_MONSTER / 2; i++) {
+		normalMonsterBullet[i].setCoordinates(coordinates.x + NORMAL_MONSTER_WIDTH, coordinates.y);
+	}
+	for (int i = AMOUNT_BULLET_NORMAL_MONSTER / 2; i < 3 * AMOUNT_BULLET_NORMAL_MONSTER / 4; i++) {
+		normalMonsterBullet[i].setCoordinates(coordinates.x + NORMAL_MONSTER_WIDTH, coordinates.y + NORMAL_MONSTER_HEIGHT);
+	}
+	for (int i = 3 * AMOUNT_BULLET_NORMAL_MONSTER / 4; i < AMOUNT_BULLET_NORMAL_MONSTER; i++) {
+		normalMonsterBullet[i].setCoordinates(coordinates.x, coordinates.y + NORMAL_MONSTER_HEIGHT);
+	}
+}
+
 // ==========================================================================
 
 void LazerMonster::initLazerMonster(int _x, int _y, SDL_Renderer* renderer) {
@@ -133,8 +140,8 @@ void LazerMonster::initLazerMonster(int _x, int _y, SDL_Renderer* renderer) {
 	coordinates.x = _x, coordinates.y = _y;
 	coordinates.w = LAZER_MONSTER_WIDTH;
 	coordinates.h = LAZER_MONSTER_HEIGHT;
-	texture = loadImage(LAZER_MONSTER_LEFT_PATH, renderer);
-	textureRight = loadImage(LAZER_MONSTER_RIGHT_PATH, renderer);
+	sprite->initAnimatedSprite(LAZER_MONSTER_PATH, LAZER_MONSTER_FRAMES, LAZER_MONSTER_CLIPS, renderer);
+
 }
 
 LazerMonster::~LazerMonster() {
@@ -143,11 +150,12 @@ LazerMonster::~LazerMonster() {
 
 void LazerMonster::render(SDL_Renderer* renderer) {
 	if (direction == Direction::West) {
-		SDL_RenderCopy(renderer, texture, NULL, &coordinates);
+		sprite->renderAnimatedSprite(renderer, coordinates, SDL_FLIP_HORIZONTAL);
 	}
 	else {
-		SDL_RenderCopy(renderer, textureRight, NULL, &coordinates);
+		sprite->renderAnimatedSprite(renderer, coordinates, SDL_FLIP_NONE);
 	}
+
 }
 
 // ================================================================
@@ -156,7 +164,7 @@ BossMonster::~BossMonster() {
 	destructThreat();
 }
 
-void BossMonster::initBossMonster(int _x, int _y, SDL_Renderer* renderer) {
+void BossMonster::initBossMonster(int _x, int _y,std::string bulletPath, SDL_Renderer* renderer) {
 	hp = HP_BOSS_MONSTER;
 	damage = DAMAGE_BOSS_MONSTER;
 	direction = Direction::East;
@@ -164,10 +172,82 @@ void BossMonster::initBossMonster(int _x, int _y, SDL_Renderer* renderer) {
 	coordinates.x = _x, coordinates.y = _y;
 	coordinates.w = BOSS_MONSTER_WIDTH;
 	coordinates.h = BOSS_MONSTER_HEIGHT;
-	texture = loadImage(BOSS_PATH, renderer);
-	textureRight = nullptr;
+	sprite->initAnimatedSprite(BOSS_MONSTER_PATH, BOSS_MONSTER_FRAMES, BOSS_MONSTER_CLIPS, renderer);
+
+	for (int i = 0; i < AMOUNT_BULLET_BOSS_MONSTER / 4; i++) {
+		bulletBossMonster[i].initialize(BULLET_BOSS_MONSTER_PATH, SPEED_BOSS_MONSTER_BULLET, Direction::NorthEast, renderer);
+		bulletBossMonster[i].setCoordinates(coordinates.x+ BOSS_MONSTER_WIDTH, coordinates.y + i*50);
+		bulletBossMonster[i].setSizeBullet(BULLET_BOSS_MONSTER_WIDTH, BULLET_BOSS_MONSTER_HEIGHT);		
+	}
+	for (int i = AMOUNT_BULLET_BOSS_MONSTER / 4; i < AMOUNT_BULLET_BOSS_MONSTER/2; i++) {
+		bulletBossMonster[i].initialize(BULLET_BOSS_MONSTER_PATH, SPEED_BOSS_MONSTER_BULLET, Direction::SouthEast, renderer);
+		bulletBossMonster[i].setCoordinates(coordinates.x, coordinates.y + (i - AMOUNT_BULLET_BOSS_MONSTER / 4) * 50);
+		bulletBossMonster[i].setSizeBullet(BULLET_BOSS_MONSTER_WIDTH, BULLET_BOSS_MONSTER_HEIGHT);
+	}
+	for (int i = AMOUNT_BULLET_BOSS_MONSTER / 2; i < 3*AMOUNT_BULLET_BOSS_MONSTER/4; i++) {
+		bulletBossMonster[i].initialize(BULLET_BOSS_MONSTER_PATH, SPEED_BOSS_MONSTER_BULLET, Direction::NorthWest, renderer);
+		bulletBossMonster[i].setCoordinates(coordinates.x, coordinates.y + (i - AMOUNT_BULLET_BOSS_MONSTER / 2) * 50);
+		bulletBossMonster[i].setSizeBullet(BULLET_BOSS_MONSTER_WIDTH, BULLET_BOSS_MONSTER_HEIGHT);
+	}
+	for (int i = 3*AMOUNT_BULLET_BOSS_MONSTER / 4; i < AMOUNT_BULLET_BOSS_MONSTER; i++) {
+		bulletBossMonster[i].initialize(BULLET_BOSS_MONSTER_PATH, SPEED_BOSS_MONSTER_BULLET, Direction::SouthWest, renderer);
+		bulletBossMonster[i].setCoordinates(coordinates.x, coordinates.y + (i-3*AMOUNT_BULLET_BOSS_MONSTER/4)*50 );
+		bulletBossMonster[i].setSizeBullet(BULLET_BOSS_MONSTER_WIDTH, BULLET_BOSS_MONSTER_HEIGHT);		
+	}
 }
 
 void BossMonster::renderBossMonster(SDL_Renderer* renderer) {
-	SDL_RenderCopy(renderer, texture, NULL, &coordinates);
+	if (direction == Direction::West) {
+		sprite->renderAnimatedSprite(renderer, coordinates, SDL_FLIP_HORIZONTAL);
+	}
+	else {
+		sprite->renderAnimatedSprite(renderer, coordinates, SDL_FLIP_NONE);
+	}
+}
+
+void BossMonster::BossMove() {
+	switch (direction)
+	{
+	case Direction::North:
+		coordinates.y -= speed;
+		if (coordinates.y <= 240) {
+			direction = Direction::East;
+		}
+		break;	
+	case Direction::West:
+		coordinates.x -= speed;
+		if (coordinates.x <= 700) {
+			direction = Direction::North;
+		}
+		break;
+	case Direction::East:
+		coordinates.x += speed;
+		if (coordinates.x >=1080) {
+			direction = Direction::South;
+		}
+		break;
+	case Direction::South:
+		coordinates.y += speed;
+		if (coordinates.y >= 360) {
+			direction = Direction::West;
+		}
+		break;	
+	default:
+		break;
+	}
+}
+
+void BossMonster::setNewTurnBullet() {
+	for (int i = 0; i < AMOUNT_BULLET_BOSS_MONSTER / 4; i++) {
+		bulletBossMonster[i].setCoordinates(coordinates.x + BOSS_MONSTER_WIDTH, coordinates.y + i * 50);
+	}
+	for (int i = AMOUNT_BULLET_BOSS_MONSTER / 4; i < AMOUNT_BULLET_BOSS_MONSTER / 2; i++) {
+		bulletBossMonster[i].setCoordinates(coordinates.x, coordinates.y + (i - AMOUNT_BULLET_BOSS_MONSTER / 4) * 50);
+	}
+	for (int i = AMOUNT_BULLET_BOSS_MONSTER / 2; i < 3 * AMOUNT_BULLET_BOSS_MONSTER / 4; i++) {
+		bulletBossMonster[i].setCoordinates(coordinates.x, coordinates.y + (i - AMOUNT_BULLET_BOSS_MONSTER / 2) * 50);
+	}
+	for (int i = 3 * AMOUNT_BULLET_BOSS_MONSTER / 4; i < AMOUNT_BULLET_BOSS_MONSTER; i++) {
+		bulletBossMonster[i].setCoordinates(coordinates.x, coordinates.y + (i - 3 * AMOUNT_BULLET_BOSS_MONSTER / 4) * 50);
+	}
 }

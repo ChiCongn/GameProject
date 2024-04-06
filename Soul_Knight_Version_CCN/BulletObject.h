@@ -4,11 +4,12 @@
 #define BULLET_OBJECT_H
 
 #include"Common.h"
-#include"BaseObject.h"
+#include"ObstacleObject.h"
 #include"Defs.h"
 
-class BulletObject : public BaseObject{
-	Direction direction;
+class BulletObject : public ObstacleObject{
+	Direction direction;	
+	int speed;
 public:
 	void initialize(std::string path,int _speed,Direction _direction, SDL_Renderer* renderer);
 	void destructBullet();

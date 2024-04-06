@@ -52,6 +52,7 @@ void BulletObject::BulletMove() {
 	default:
 		break;
 	}
+	
 }
 
 

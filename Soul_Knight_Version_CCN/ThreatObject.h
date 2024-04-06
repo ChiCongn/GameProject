@@ -11,12 +11,10 @@
 
 class ThreatObject :public BaseObject {
 protected:
-	SDL_Texture* textureRight;
 	Direction direction;
 	int hp, damage;
 	Mix_Chunk* DeadAudio;
 	Mix_Chunk* AttackPlayerAudio;
-	//std::vector<BulletObject*> bullet;
 public:
 	bool isDead() { return hp <= 0; }
 	void getDamage(int _damage) { hp -= _damage; }
@@ -35,6 +33,8 @@ public:
 	void initNormalMonster(int _x, int _y,std::string bulletPath, SDL_Renderer* renderer);
 	void normalMonsterMove(const SDL_Rect obstaclePos[]);
 	void render(SDL_Renderer* renderer);
+	void getDamage(int _damage) { hp -= damage; }
+	void setNewTurnBullet();
 };
 
 class LazerMonster :public ThreatObject {
@@ -47,10 +47,12 @@ public:
 
 class BossMonster :public ThreatObject {
 public:
+	BulletObject* bulletBossMonster = new BulletObject[AMOUNT_BULLET_BOSS_MONSTER];
 	~BossMonster();
-	void initBossMonster(int _x, int _y, SDL_Renderer* renderer);
+	void initBossMonster(int _x, int _y,std::string bulletPath, SDL_Renderer* renderer);
 	void BossMove();
 	void renderBossMonster(SDL_Renderer* renderer);
+	void setNewTurnBullet();
 };
 
 #endif

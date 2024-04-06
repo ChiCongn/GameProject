@@ -1,4 +1,5 @@
-﻿  BaseObject.cpp
+﻿  AnimatedSprite.cpp
+  BaseObject.cpp
   BulletObject.cpp
   Common.cpp
   GameObject.cpp
@@ -6,6 +7,7 @@
   PlayerObject.cpp
   Support.cpp
   ThreatObject.cpp
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\ThreatObject.cpp(9,9): warning C4552: '/': result of expression not used
   main.cpp
   Generating Code...
   Soul_Knight_Version_CCN.vcxproj -> D:\GitHub\Soul_Knight_Version_CCN\x64\Debug\Soul_Knight_Version_CCN.exe

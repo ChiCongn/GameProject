@@ -22,7 +22,7 @@ void SupportObject::setTextSupport(std::string text,std::string fontPath, SDL_Re
 	texture = loadText(text,fontPath,renderer);
 }
 
-void SupportObject::render(int hp, SDL_Renderer* renderer) {
-	coordinates.w = hp;
+void SupportObject::render(int width, SDL_Renderer* renderer) {
+	coordinates.w = width*5;
 	SDL_RenderCopy(renderer, texture, NULL, &coordinates);
 }

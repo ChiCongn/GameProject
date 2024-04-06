@@ -1,9 +1,8 @@
 
 #include"PlayerObject.h"
 
-void PlayerObject::initializePlayer( SDL_Renderer* renderer) {
-	texture = loadImage(IMAGE_PLAYER_RIGHT_PATH, renderer);
-	textureLeft = loadImage(IMAGE_PLAYER_LEFT_PATH, renderer);
+void PlayerObject::initializePlayer(SDL_Renderer* renderer) {
+	sprite->initAnimatedSprite(IMAGE_PLAYER_PATH, PLAYER_FRAMES, PLAYER_CLIPS, renderer);
 	hp = MAX_HP_PLAYER;
 	damage = DEFAUT_DAMAGE_PLAYER;
 	ex = 0;
@@ -13,15 +12,14 @@ void PlayerObject::initializePlayer( SDL_Renderer* renderer) {
 	coordinates.y = SCREEN_HEIGHT - PLAYER_HEIGHT;
 	coordinates.w = PLAYER_WIDTH;
 	coordinates.h = PLAYER_HEIGHT;
-	//Hp.initialize(0, 0, 10);
-	//Hp.setImageSupport(IMAGE_HP_PATH, renderer);
-	//Ex.initialize(0, 10, 10);
-	//Ex.setImageSupport(IMAGE_EX_PATH, renderer);
+	Hp->initialize(0, 0, 10);
+	Hp->setImageSupport(IMAGE_HP_PATH, renderer);
+	Ex->initialize(0, 10, 10);
+	Ex->setImageSupport(IMAGE_EX_PATH, renderer);
 }
 
 PlayerObject::PlayerObject() {
-	texture = nullptr;
-	textureLeft = nullptr;
+	//textureLeft = nullptr;
 	hp = MAX_HP_PLAYER;
 	damage = DEFAUT_DAMAGE_PLAYER;
 	ex = 0;
@@ -33,23 +31,22 @@ PlayerObject::PlayerObject() {
 	//Hp.initialize(0, 0, 10);
 	//Ex.initialize(0, 10, 10);
 
-	getDamageAudio = loadAudio(GET_DAMAGE_AUDIO_PATH);
+	/*getDamageAudio = loadAudio(GET_DAMAGE_AUDIO_PATH);
 	levelUpAudio = loadAudio(LEVEL_UP_AUDIO_PATH);
 	attackAudio = loadAudio(ATTACK_AUDIO_PATH);
-	getExAudio = loadAudio(GET_EX_AUDIO_PATH);
+	getExAudio = loadAudio(GET_EX_AUDIO_PATH);*/
 	std::cout<<"init dafault playerObject\n";
 }
 
 PlayerObject::~PlayerObject() {
-	if (texture != nullptr) {
-		SDL_DestroyTexture(texture);
-		texture = nullptr;
-	}
-	Mix_FreeChunk(attackAudio);
+	sprite->~AnimatedSprite();
+	delete Hp;
+	delete Ex;
+	/*Mix_FreeChunk(attackAudio);
 	Mix_FreeChunk(getDamageAudio);
 	Mix_FreeChunk(levelUpAudio);
-	Mix_FreeChunk(getExAudio);
-	attackAudio = getDamageAudio = levelUpAudio = getExAudio = nullptr;
+	Mix_FreeChunk(getExAudio);*/
+	//attackAudio = getDamageAudio = levelUpAudio = getExAudio = nullptr;
 }
 
 void PlayerObject::playerMove(SDL_Event e, const SDL_Rect obstacle[]) {
@@ -125,11 +122,14 @@ void PlayerObject::levelUp() {
 
 void PlayerObject::renderPlayer(SDL_Renderer* renderer) {
 	if (direction == Direction::West) {
-		SDL_RenderCopy(renderer, textureLeft, NULL, &coordinates);
+		sprite->renderAnimatedSprite(renderer, coordinates,SDL_FLIP_HORIZONTAL);
 	}
 	else {
-		SDL_RenderCopy(renderer, texture, NULL, &coordinates);
+		sprite->renderAnimatedSprite(renderer, coordinates, SDL_FLIP_NONE);
 	}
+	
+	Hp->render(hp,renderer);
+	Ex->render(ex, renderer);
 }
 
 void PlayerObject::setUpNewTurn() {
@@ -137,3 +137,15 @@ void PlayerObject::setUpNewTurn() {
 	ex = 0;
 	damage = DEFAUT_DAMAGE_PLAYER;
 }
+
+//void PlayerObject::collisionWithThreat(BossMonster* boss, NormalMonster* normalMonster, LazerMonster* lazerMonster) {
+//	if (checkCollision(coordinates, boss->getCoordinates())) {
+//		getDamge(DAMAGE_BOSS_MONSTER);
+//	}
+//	for (int i = 0; i < AMOUNT_BULLET_BOSS_MONSTER; i++) {
+//		if(checkCollision(coor))
+//	}
+//	if (checkCollision(coordinates, normalMonster->getCoordinates())) {
+//		getDamge(DAMAGE_NORMAL_MONSTER);
+//	}
+//}

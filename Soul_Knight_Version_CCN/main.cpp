@@ -17,14 +17,15 @@ int main(int argv, char**argc)
     std::cout << "Start Time: " << startTime << std::endl;
 
     // Play
-    if (game->gameState == GameState::Play) {
-        game->gamePlay(event, renderer);     
-    }
-		   
+    
+    game->gamePlay(event, renderer);     
+    if(game->gameState==GameState::Quit)
+        std::cout << "GameQuit" << std::endl;
     // Game Quit-> End
 	std::cout << "OK!\n";
 	game->~GameObject();
-    waitUntilKeyPressed();
+    std::cout << "Return pls\n";
+    //waitUntilKeyPressed();
     quitSDL(window, renderer);
 	return 0;
 }

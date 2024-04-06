@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedSprite.cpp" />
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="BulletObject.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="ThreatObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedSprite.h" />
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BulletObject.h" />
     <ClInclude Include="Common.h" />

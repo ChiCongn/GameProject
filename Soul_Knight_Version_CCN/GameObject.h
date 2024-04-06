@@ -12,7 +12,7 @@ class GameObject {
 	PlayerObject* player=new PlayerObject;
 	ObstacleObject* obstacle = new ObstacleObject[12];
 	NormalMonster* normalMonster=new NormalMonster[AMOUNT_NORMAL_MONSTER];
-	//ThreatObject* boss;
+	BossMonster* boss = new BossMonster;
 	LazerMonster* lazerMonster=new LazerMonster[AMOUNT_LAZER_MONSTER];
 public:
 	GameState gameState;

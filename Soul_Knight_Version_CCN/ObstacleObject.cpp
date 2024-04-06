@@ -7,7 +7,6 @@ void ObstacleObject::initializeObstacle(SDL_Rect rect, SDL_Renderer* renderer) {
 	coordinates.w = rect.w;
 	coordinates.h = rect.h;
 	texture = loadImage("./Image\\Obstacle.png",renderer);
-	speed = 0;
 }
 
 ObstacleObject::~ObstacleObject() {
