@@ -9,20 +9,28 @@
 
 class GameObject {		
 	SDL_Texture* map;
-	PlayerObject* player=new PlayerObject;
+	MenuGame* menu = new MenuGame;
+	PlayerObject* player = new PlayerObject;
 	ObstacleObject* obstacle = new ObstacleObject[12];
 	NormalMonster* normalMonster=new NormalMonster[AMOUNT_NORMAL_MONSTER];
-	BossMonster* boss = new BossMonster;
+	BossMonster* boss=new BossMonster;
 	LazerMonster* lazerMonster=new LazerMonster[AMOUNT_LAZER_MONSTER];
+
+	Mix_Chunk* gameDefeatAudio;
+	Mix_Chunk* gameVictoryAudio;
+	Mix_Chunk* gameIntroAudio;
+	Mix_Chunk* chibichibiAudio; /// :))
+
 public:
 	GameState gameState;
 	void initializeGame(SDL_Renderer* renderer);
 	GameObject(SDL_Renderer* renderer);
 	~GameObject();
-	void gameIntro();
+	void gameIntro(SDL_Event& e, SDL_Renderer* renderer);
 	void gamePlay(SDL_Event& e, SDL_Renderer* renderer);
-	void gameOver();
+	void gameOver(SDL_Event& e, SDL_Renderer* renderer);
 	void renderGame(SDL_Renderer* renderer);
+	void Running(SDL_Event& e, SDL_Renderer* renderer);
 };
 
 

@@ -16,17 +16,20 @@ int main(int argv, char**argc)
     Uint32 startTime = SDL_GetTicks()/1000;
     std::cout << "Start Time: " << startTime << std::endl;
 
-    // Play
-    
-    game->gamePlay(event, renderer);     
+    // Start    
+    game->Running(event, renderer);
+   /* game->gameIntro(event, renderer);   
+    game->gamePlay(event, renderer);
+    game->gameOver(event, renderer);*/
+
     if(game->gameState==GameState::Quit)
         std::cout << "GameQuit" << std::endl;
     // Game Quit-> End
 	std::cout << "OK!\n";
-	game->~GameObject();
-    std::cout << "Return pls\n";
+    delete game;
     //waitUntilKeyPressed();
     quitSDL(window, renderer);
+    std::cout << "SUCCESS! <3" << std::endl;
 	return 0;
 }
 

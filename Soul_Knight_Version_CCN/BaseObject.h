@@ -10,7 +10,7 @@ class BaseObject {
 protected:
 	int speed;
 	SDL_Rect coordinates;
-	AnimatedSprite* sprite=new AnimatedSprite;
+	AnimatedSprite* sprite;
 
 public:
 	BaseObject();

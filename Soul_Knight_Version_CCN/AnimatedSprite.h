@@ -6,10 +6,14 @@
 
 class AnimatedSprite {
 	SDL_Texture* texture;
+    SDL_Rect coordinates;
 	std::vector<SDL_Rect> clips;
     int currentFrame=0;
 public:
-	void initAnimatedSprite (std::string imagePath, const int frames, const int _clips[][4], SDL_Renderer* renderer);
+    AnimatedSprite() = delete;
+    AnimatedSprite(AnimatedSprite& other) = delete;
+	AnimatedSprite(std::string imagePath,int _w, int _h, const int frames, const int _clips[][4], SDL_Renderer* renderer);
+    void setCoordinates(int _x, int _y) { coordinates.x = _x, coordinates.y = _y; }
     void tick() {
         currentFrame = (currentFrame + 1) % clips.size();
     }
@@ -17,7 +21,7 @@ public:
         return &(clips[currentFrame]);
     }
     ~AnimatedSprite();
-    void renderAnimatedSprite(SDL_Renderer* renderer, SDL_Rect& coordinates, const SDL_RendererFlip flip);
+    void renderAnimatedSprite(SDL_Renderer* renderer, const SDL_RendererFlip flip);
 };
 
 #endif ANIMATED_SPRITE_H

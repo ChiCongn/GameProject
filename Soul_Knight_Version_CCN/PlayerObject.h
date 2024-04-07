@@ -9,26 +9,26 @@
 //#include"ThreatObject.h"
 
 class PlayerObject :public BaseObject {
+	bool attack;
 	int hp, ex, damage;
-	//AnimatedSprite* sprite = new AnimatedSprite;
 	SupportObject* Hp=new SupportObject;
 	SupportObject* Ex=new SupportObject;
 	//SupportObject HighScore, Score;
 	Direction direction;
-
+	AnimatedSprite* playerSkill;
 	/*Mix_Chunk* getDamageAudio;
 	Mix_Chunk* levelUpAudio;
 	Mix_Chunk* attackAudio;
 	Mix_Chunk* getExAudio;*/
 	
 public:
-	void initializePlayer(SDL_Renderer* renderer);
-	PlayerObject();
+	void initPlayer(SDL_Renderer* renderer);
+	///PlayerObject();
 	~PlayerObject();
 	bool isDead() { return hp <= 0; }
 	void playerMove(SDL_Event e, const SDL_Rect obstaclePos[]);
 	//void collisionWithThreat(BossMonster* boss, NormalMonster* normalMonster, LazerMonster* lazerMonster);
-	void attackThreat();
+	void attackThreat(SDL_Event e);
 	void getDamge(int _damage) { hp -= _damage; }
 	void getExperience(int _ex) { ex += _ex; }
 	void levelUp();

@@ -20,7 +20,7 @@ public:
 	void getDamage(int _damage) { hp -= _damage; }
 	//void intialize(SDL_Rect rect, int _speed,int _damage, std::string path, SDL_Renderer* renderer);
 	ThreatObject();
-	~ThreatObject();
+	//virtual~ThreatObject();
 	void setUpNewTurn();
 	void destructThreat();
 	//virtual void render(SDL_Renderer* renderer);
@@ -48,8 +48,9 @@ public:
 class BossMonster :public ThreatObject {
 public:
 	BulletObject* bulletBossMonster = new BulletObject[AMOUNT_BULLET_BOSS_MONSTER];
+	void initBossMonster(int _x, int _y, std::string bulletPath, SDL_Renderer* renderer);
+	//BossMonster();
 	~BossMonster();
-	void initBossMonster(int _x, int _y,std::string bulletPath, SDL_Renderer* renderer);
 	void BossMove();
 	void renderBossMonster(SDL_Renderer* renderer);
 	void setNewTurnBullet();
