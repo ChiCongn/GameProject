@@ -24,6 +24,7 @@ Mix_Chunk* loadAudio(std::string audioPath);
 void playAudio(Mix_Chunk* sound);
 
 bool checkCollision(const SDL_Rect a,const SDL_Rect b);
+bool checkCollisionCircle(const SDL_Point center, const SDL_Rect a);
 Mix_Music* loadMusic(const char* path);
 void playMusic(Mix_Music* gMusic);
 

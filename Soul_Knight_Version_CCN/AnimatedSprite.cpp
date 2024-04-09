@@ -21,7 +21,7 @@ AnimatedSprite::~AnimatedSprite() {
 	std::cout << "start ~AnimatedSprite-> delete texture*\n";
 	if (texture != nullptr) {
 		SDL_DestroyTexture(texture);		
-		texture = nullptr;
+		//texture = nullptr;
 	}
 	std::cout << "ok ~AnimatedSprite\n";
 }

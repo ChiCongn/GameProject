@@ -2,12 +2,16 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-/// Background
+/// GameObject
 const std::string WINDOW_TITLE = "Soul knight version ccn :v";
 #define BKGROUND_MUSIC_PATH "./Audio\\BkGroundMusic.mp3"
+#define MAP_PATH "./Image\\Map.png"
+#define AUDIO_GAME_INTRO_PATH "./Audio\\GameIntro.wav"
+#define AUDIO_GAME_DEFEAT_PATH "./Audio\\GameDefeat.wav"
+#define AUDIO_GAME_VICTORY_PATH "./Audio\\GameVictory.wav"
+#define AUDIO_CHIBI_CHIBI_PATH "./Audio\\ChibiChibi.wav"
 #define SCREEN_WIDTH  1200
 #define SCREEN_HEIGHT  670
-#define MAP_PATH "./Image\\Map.png"
 
 /// MenuGame
 #define IMAGE_GAME_INTRO_PATH "./Image\\gameIntro.png"
@@ -15,10 +19,7 @@ const std::string WINDOW_TITLE = "Soul knight version ccn :v";
 #define IMAGE_GAME_VICTORY_PATH "./Image\\GameVictory.png"
 #define IMAGE_GAME_DEFEAT_PATH "./Image\\GameDefeat.png"
 #define IMAGE_CHIBI_CHIBI_PATH "./Image\\ChibiChibi.png"
-#define AUDIO_GAME_INTRO_PATH "./Audio\\GameIntro.wav"
-#define AUDIO_GAME_DEFEAT_PATH "./Audio\\GameDefeat.wav"
-#define AUDIO_GAME_VICTORY_PATH "./Audio\\GameVictory.wav"
-#define AUDIO_CHIBI_CHIBI_PATH "./Audio\\ChibiChibi.wav"
+
 const int CHIBI_CHIBI_CLIPS[][4] = { /// :))
 	{0, 0, 158, 105}, {158, 0, 158, 105}, {316, 0, 158, 105},
 	{475, 0, 158, 105}, {633, 0, 158, 105}, {791, 0, 158, 105},
@@ -41,7 +42,7 @@ const int CHIBI_CHIBI_HEIGHT = 100;
 #define AUDIO_ATTACK_PATH "./Audio\\Attack.wav"
 #define AUDIO_GET_EX_PATH "./Audio\\GetEx.wav"
 
-const int MAX_HP_PLAYER = 8;
+const int MAX_HP_PLAYER = 100;
 const int DEFAUT_DAMAGE_PLAYER = 2;
 const int DEFAULT_SPEED_PLAYER = 25;
 const int PLAYER_WIDTH = 70;

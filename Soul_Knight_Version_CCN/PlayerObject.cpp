@@ -71,7 +71,7 @@ void PlayerObject::renderPlayer(SDL_Renderer* renderer) {
 
 void PlayerObject::playerMove(SDL_Event e, const SDL_Rect obstacle[]) {
 	//std::cout << "PlayerMove\n";
-	switch (e.key.keysym.sym)
+	switch (e.key.keysym.sym)/// them x_val and y_val;
 	{
 	case SDLK_UP:
 		coordinates.y -= speed;
