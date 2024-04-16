@@ -1,7 +1,7 @@
 
 #include"AnimatedSprite.h"
 
-AnimatedSprite::AnimatedSprite(std::string imagePath,int _w, int _h, const int frames, const int _clips[][4], SDL_Renderer* renderer) {
+AnimatedSprite::AnimatedSprite(std::string imagePath, int _w, int _h, const int frames, const int _clips[][4], SDL_Renderer* renderer) {
 	currentFrame = 0;
 	coordinates.x = coordinates.y = 0;
 	coordinates.w = _w, coordinates.h = _h;

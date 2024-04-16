@@ -14,6 +14,7 @@ public:
     AnimatedSprite(AnimatedSprite& other) = delete;
 	AnimatedSprite(std::string imagePath,int _w, int _h, const int frames, const int _clips[][4], SDL_Renderer* renderer);
     void setCoordinates(int _x, int _y) { coordinates.x = _x, coordinates.y = _y; }
+    SDL_Rect getCoordinates() { return coordinates; }
     void tick() {
         currentFrame = (currentFrame + 1) % clips.size();
     }

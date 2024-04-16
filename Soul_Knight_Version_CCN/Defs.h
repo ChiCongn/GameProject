@@ -15,7 +15,7 @@ const std::string WINDOW_TITLE = "Soul knight version ccn :v";
 
 /// MenuGame
 #define IMAGE_GAME_INTRO_PATH "./Image\\gameIntro.png"
-#define IMAGE_GAME_INSTRUCTION_PATH "./Image\\GameInstruction.png"
+#define IMAGE_GAME_INSTRUCTION_PATH "./Image\\GameInstructions.png"
 #define IMAGE_GAME_VICTORY_PATH "./Image\\GameVictory.png"
 #define IMAGE_GAME_DEFEAT_PATH "./Image\\GameDefeat.png"
 #define IMAGE_CHIBI_CHIBI_PATH "./Image\\ChibiChibi.png"
@@ -42,7 +42,7 @@ const int CHIBI_CHIBI_HEIGHT = 100;
 #define AUDIO_ATTACK_PATH "./Audio\\Attack.wav"
 #define AUDIO_GET_EX_PATH "./Audio\\GetEx.wav"
 
-const int MAX_HP_PLAYER = 100;
+const int MAX_HP_PLAYER = 10;
 const int DEFAUT_DAMAGE_PLAYER = 2;
 const int DEFAULT_SPEED_PLAYER = 25;
 const int PLAYER_WIDTH = 70;
@@ -66,6 +66,15 @@ const int PLAYER_CLIPS[][4] = {
 };
 const int PLAYER_FRAMES = sizeof(PLAYER_CLIPS) / sizeof(int) / 4;
 
+const int PLAYER_SLASH_CLIPS[][4] = {
+	{0, 0, 102, 102},
+	{102, 0, 102, 102},
+	{204, 0, 102, 102},
+	{306, 0, 102, 102},
+	{408, 0, 102, 102}
+};
+const int PLAYER_SLASH_FRAMES = sizeof(PLAYER_SLASH_CLIPS) / sizeof(int) / 4;
+
 const int PLAYER_SKILL_CLIPS[][4] = {
 	{0, 0, 266, 228},
 	{266, 0, 266, 228},
@@ -79,6 +88,7 @@ const int PLAYER_SKILL_FRAMES = sizeof(PLAYER_SKILL_CLIPS) / sizeof(int) / 4;
 /// MONSTER-THREATS
 #define AUDIO_THREAT_DEAD_PATH "./Audio\\ThreatDead.wav"
 #define AUDIO_ATTACK_PLAYER_PATH "./Audio\\AttackPlayer.wav"
+const int NEXT_TIME_CAUSE_DAMAGE = 4000;
 //Boss
 #define IMAGE_BOSS_MONSTER_PATH "./Image\\BossMonster.png"
 #define IMAGE_BULLET_BOSS_MONSTER_PATH "./Image\\BulletBossMonster.png"
@@ -86,7 +96,7 @@ const int BOSS_MONSTER_WIDTH = 115;
 const int BOSS_MONSTER_HEIGHT = 120;
 const int DAMAGE_BOSS_MONSTER = 5;
 const int SPEED_BOSS_MONSTER = 3;
-const int HP_BOSS_MONSTER = 100;
+const int HP_BOSS_MONSTER = 50;
 const int BULLET_BOSS_MONSTER_WIDTH = 30;
 const int BULLET_BOSS_MONSTER_HEIGHT = 30;
 const int AMOUNT_BULLET_BOSS_MONSTER = 8;
@@ -137,7 +147,7 @@ const int AMOUNT_LAZER_MONSTER = 7;
 const int LAZER_MONSTER_WIDTH = 77;
 const int LAZER_MONSTER_HEIGHT = 80;
 const int HP_LAZER_MONSTER = 5;
-const int DAMAGE_LAZER_MONSTER = 2;
+const int DAMAGE_LAZER_MONSTER = 1;
 const int SPEED_LAZER_MONSTER = 2;
 
 const int PosXListLazerMonster[] = {5, 160, 230, 240, 480, 660, 660};

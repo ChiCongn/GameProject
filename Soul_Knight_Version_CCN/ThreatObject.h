@@ -11,18 +11,28 @@
 
 class ThreatObject :public BaseObject {
 protected:
+	Uint32 preTimeCollision, currentTimeCollision;
 	Direction direction;
 	int hp, damage;
 	Mix_Chunk* DeadAudio;
 	Mix_Chunk* AttackPlayerAudio;
 public:
 	bool isDead() { return hp <= 0; }
-	void getDamage(int _damage) { hp -= _damage; }
+	bool isReadyCauseDamage() {
+		return currentTimeCollision - preTimeCollision >= NEXT_TIME_CAUSE_DAMAGE;
+	}
+
+	void updateCurrentTime() { currentTimeCollision = SDL_GetTicks(); }
+	void updatePreTimeCollision() { preTimeCollision = currentTimeCollision; }
+	void getDamage(int _damage) {
+		hp -= _damage;
+		std::cout << "Threat get damage\n";
+	}
 	//void intialize(SDL_Rect rect, int _speed,int _damage, std::string path, SDL_Renderer* renderer);
 	ThreatObject();
 	//virtual~ThreatObject();
-	void setUpNewTurn();
-	void destructThreat();
+	void setUpNewTurn(int _hp, int x, int y);
+	void destroyThreat();
 	//virtual void render(SDL_Renderer* renderer);
 };
 

@@ -8,6 +8,10 @@
 #include"Defs.h"
 
 class GameObject {		
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	SDL_Event e;
+
 	SDL_Texture* map;
 	MenuGame* menu = new MenuGame;
 	PlayerObject* player = new PlayerObject;
@@ -23,14 +27,14 @@ class GameObject {
 
 public:
 	GameState gameState;
-	void initializeGame(SDL_Renderer* renderer);
-	GameObject(SDL_Renderer* renderer);
+	void initializeGame();
+	GameObject();
 	~GameObject();
-	void gameIntro(SDL_Event& e, SDL_Renderer* renderer);
-	void gamePlay(SDL_Event& e, SDL_Renderer* renderer);
-	void gameOver(SDL_Event& e, SDL_Renderer* renderer);
-	void renderGame(SDL_Renderer* renderer);
-	void Running(SDL_Event& e, SDL_Renderer* renderer);
+	void gameIntro();
+	void gamePlay();
+	void gameOver();
+	void renderGame();
+	void Running();
 };
 
 

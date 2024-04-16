@@ -8,7 +8,7 @@ SupportObject::~SupportObject() {
 	}
 }
 
-void SupportObject::initSupportObject(int _x, int _y, int _h) {
+SupportObject::SupportObject(int _x, int _y, int _h) {
 	coordinates.x = _x;
 	coordinates.y = _y;
 	coordinates.h = _h;

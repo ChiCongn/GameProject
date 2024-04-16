@@ -2,6 +2,8 @@
 #include"ThreatObject.h"
 
  ThreatObject::ThreatObject() {
+	preTimeCollision = SDL_GetTicks();
+	currentTimeCollision = preTimeCollision + NEXT_TIME_CAUSE_DAMAGE;
 	coordinates.x = 0;
 	coordinates.y = 0;
 	coordinates.w = 0;
@@ -16,7 +18,7 @@
 }
 
 
-void ThreatObject::destructThreat() {
+void ThreatObject::destroyThreat() {
 	std::cout << "start destructThreat\n";
 	delete sprite;
 	std::cout << "ok delete sprite*\n";
@@ -29,6 +31,12 @@ void ThreatObject::destructThreat() {
 		DeadAudio = nullptr;
 	}
 	std::cout << "ok destructThreat\n";
+}
+
+void ThreatObject::setUpNewTurn(int _hp, int x, int y) {
+	hp = _hp;
+	coordinates.x = x;
+	coordinates.y = y;
 }
 
 void NormalMonster::initNormalMonster(int _x, int _y,std::string bulletPath, SDL_Renderer* renderer) {
@@ -67,7 +75,7 @@ void NormalMonster::initNormalMonster(int _x, int _y,std::string bulletPath, SDL
 NormalMonster::~NormalMonster() {
 	delete[] normalMonsterBullet;
 	//std::cout << "delete normalMonsterBullet pointer\n";
-	destructThreat();
+	destroyThreat();
 }
 
 void NormalMonster::normalMonsterMove(const SDL_Rect obstaclePos[]) {
@@ -146,7 +154,7 @@ void LazerMonster::initLazerMonster(int _x, int _y, SDL_Renderer* renderer) {
 }
 
 LazerMonster::~LazerMonster() {
-	destructThreat();
+	destroyThreat();
 }
 
 void LazerMonster::render(SDL_Renderer* renderer) {
@@ -191,7 +199,7 @@ BossMonster::~BossMonster() {
 	std::cout << " start ~BossMonster\n";
 	delete[] bulletBossMonster;
 	std::cout << "ok delete bulletBossMonster*[]\n";
-	destructThreat();
+	destroyThreat();
 	std::cout << "ok ~BossMonster\n";
 }
 

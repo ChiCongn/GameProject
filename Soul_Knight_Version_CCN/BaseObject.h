@@ -14,7 +14,7 @@ protected:
 
 public:
 	BaseObject();
-	~BaseObject();
+	virtual ~BaseObject();
 	void setCoordinates(int _x, int _y) { coordinates.x = _x, coordinates.y = _y; }
 	SDL_Rect getCoordinates() { return coordinates; }
 };

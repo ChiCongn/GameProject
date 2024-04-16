@@ -9,7 +9,7 @@ class SupportObject {
 public:
 	SDL_Rect coordinates;
 	SDL_Texture* texture;
-	void initSupportObject(int _x, int _y, int _h);
+	SupportObject(int _x, int _y, int _h);
 	//SupportObject();
 	~SupportObject();
 	void setImageSupport(std::string imagePath, SDL_Renderer* renderer);

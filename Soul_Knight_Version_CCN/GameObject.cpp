@@ -2,8 +2,11 @@
 #include"GameObject.h"
 #include<string>
 
-void GameObject::initializeGame(SDL_Renderer* renderer) {
-    std::cout << " start initGame\n";
+void GameObject::initializeGame() {
+    std::cout << "start init SDL\n";
+    initSDL(window, renderer);
+    std::cout << "ok init window and renderer\n";
+    std::cout << " start init properties Game\n";
     gameState = GameState::Intro;
     map = loadImage(MAP_PATH, renderer);
     menu->initMenuGame(renderer);
@@ -31,8 +34,8 @@ void GameObject::initializeGame(SDL_Renderer* renderer) {
     std::cout << "ok initGame\n";
 }
 
-GameObject::GameObject(SDL_Renderer* renderer) {
-    initializeGame(renderer);
+GameObject::GameObject() {
+    initializeGame();
 }
 
 GameObject::~GameObject() {
@@ -62,11 +65,14 @@ GameObject::~GameObject() {
     std::cout << "ok delete player* -> delete normalMonster*[]\n";
     delete[] normalMonster;
     delete[] lazerMonster;   
-    delete[] obstacle;       
-    std::cout << "ok ~Game";
+    delete[] obstacle;    
+
+    std::cout << " Destroy SDL\n";
+    quitSDL(window, renderer);
+    std::cout << "ok ~Game\n";
 }
 
-void GameObject::renderGame(SDL_Renderer* renderer) {
+void GameObject::renderGame() {
     SDL_RenderClear(renderer);
     if (gameState == GameState::Play) {
         SDL_RenderCopy(renderer, map, NULL, NULL);
@@ -94,8 +100,12 @@ void GameObject::renderGame(SDL_Renderer* renderer) {
     SDL_RenderPresent(renderer);
 }
 
-void GameObject::gamePlay(SDL_Event& e, SDL_Renderer* renderer) {
+void GameObject::gamePlay() {
     Uint32 preTime = SDL_GetTicks() / 1000;
+   /* Uint32 preTimeCollisionNormalMonster = SDL_GetTicks() / 100;
+    Uint32 preTimeCollisionBossMonster, preTimeCollisionLazerMonster;
+    preTimeCollisionBossMonster = preTimeCollisionLazerMonster = preTimeCollisionNormalMonster;*/
+   // Uint32 preTimeCollision
     while (gameState==GameState::Play) {       
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
@@ -105,41 +115,74 @@ void GameObject::gamePlay(SDL_Event& e, SDL_Renderer* renderer) {
             }
             else if (e.type == SDL_KEYDOWN) {
                 //std::cout << "gameState== GameState::Play => PLAY\n";
-                player->playerMove(e, obstaclePos);
+                player->playerMove(e,obstaclePos);
                 player->attackThreat(e);
             }
             else {
                 ;
             }
         }    
-        Uint32 curTime = SDL_GetTicks() / 1000;
+        Uint32 currentTime = SDL_GetTicks() / 1000;
         for (int i = 0; i < AMOUNT_NORMAL_MONSTER; i++) {
-            if (!normalMonster[i].isDead()) {                
+            if (normalMonster[i].isDead()) {
+                normalMonster[i].setCoordinates(-50, -50);
+            }
+            else {                
                 normalMonster[i].normalMonsterMove(obstaclePos);
-                if (checkCollision(player->getCoordinates(), normalMonster[i].getCoordinates())) {
-                    player->getDamge(DAMAGE_NORMAL_MONSTER);
-                    normalMonster[i].getDamage(DEFAUT_DAMAGE_PLAYER);
+                if (checkCollision(player->getCoordinates(), normalMonster[i].getCoordinates())) {        
+                    normalMonster[i].updateCurrentTime();
+                    if (normalMonster[i].isReadyCauseDamage()) {
+                        player->getDamge(DAMAGE_NORMAL_MONSTER);
+                        //normalMonster[i].getDamage(DEFAUT_DAMAGE_PLAYER);
+                        std::cout << "collision player and Normal Monster\n";
+                        normalMonster[i].updatePreTimeCollision();
+                    }
                     
                 }
                 for (int j = 0; j < AMOUNT_BULLET_NORMAL_MONSTER; j++) {
                     normalMonster[i].normalMonsterBullet[j].BulletMove();
                     if (checkCollision(player->getCoordinates(), normalMonster[i].normalMonsterBullet[j].getCoordinates())) {
                         player->getDamge(DAMAGE_NORMAL_MONSTER);
-                        normalMonster[i].normalMonsterBullet[j].setCoordinates(-50,-100);
+                        normalMonster[i].normalMonsterBullet[j].setCoordinates(-100,-100);
+                    }
+                    if (checkCollision(player->getCoordinatesAnimatedSprite(), normalMonster[i].normalMonsterBullet[j].getCoordinates())) {
+                        normalMonster[i].normalMonsterBullet[j].setCoordinates(-100, -100);
                     }
                 }
-            }     
-            else {
-                normalMonster[i].setCoordinates(-50, -50);
-            }
+                if (checkCollision(player->getCoordinatesAnimatedSprite(), normalMonster[i].getCoordinates())) {
+                    normalMonster[i].getDamage(DEFAUT_DAMAGE_PLAYER);
+                    std::cout << "slash slash ok\n";
+                }
+            }                
         }
         for (int i = 0; i < AMOUNT_LAZER_MONSTER; i++) {
-            lazerMonster[i].lazerMonsterMove();
+            if (lazerMonster[i].isDead()) {
+                lazerMonster[i].setCoordinates(-100, -100);
+            }
+            else {
+                lazerMonster[i].lazerMonsterMove();
+                if (checkCollision(player->getCoordinates(), lazerMonster[i].getCoordinates())) {
+                    lazerMonster[i].updateCurrentTime();
+                    if (lazerMonster[i].isReadyCauseDamage()) {
+                        player->getDamge(DAMAGE_LAZER_MONSTER);
+                        //normalMonster[i].getDamage(DEFAUT_DAMAGE_PLAYER);
+                        std::cout << "collision player and Normal Monster\n";
+                        lazerMonster[i].updatePreTimeCollision();
+                    }
+                }
+                if (checkCollision(player->getCoordinatesAnimatedSprite(), lazerMonster[i].getCoordinates())) {
+                    lazerMonster[i].getDamage(DEFAUT_DAMAGE_PLAYER);
+                    std::cout << "slash slash ok\n";
+                }
+            }            
         }
 
         boss->BossMove();   
         if (checkCollision(player->getCoordinates(), boss->getCoordinates())) {
             player->getDamge(DAMAGE_BOSS_MONSTER);
+        }
+        if (checkCollision(player->getCoordinatesAnimatedSprite(), boss->getCoordinates())) {
+            boss->getDamage(DEFAUT_DAMAGE_PLAYER);
         }
         for (int j = 0; j < AMOUNT_BULLET_BOSS_MONSTER; j++) {
             boss->bulletBossMonster[j].BulletMove();
@@ -147,28 +190,46 @@ void GameObject::gamePlay(SDL_Event& e, SDL_Renderer* renderer) {
                 player->getDamge(DAMAGE_BOSS_MONSTER);
                 boss->bulletBossMonster[j].setCoordinates(-50,-100);
             }
+            if (checkCollision(player->getCoordinatesAnimatedSprite(), boss->bulletBossMonster[j].getCoordinates())) {
+                boss->bulletBossMonster[j].setCoordinates(-50, -100);
+            }
         }       
-        if (curTime - preTime >= 4) {
+        if (currentTime - preTime >= 4) {
             for (int i = 0; i < AMOUNT_NORMAL_MONSTER; i++) {
                 normalMonster[i].setNewTurnBullet();
             }
             for (int j = 0; j < AMOUNT_BULLET_BOSS_MONSTER; j++) {
                 boss->setNewTurnBullet();
             }
-            preTime = curTime;
+            preTime = currentTime;
+        }
+
+        if (boss->isDead()) {
+            gameState = GameState::Victory;
+            //break;
         }
         if (player->isDead()) {
-            gameState = GameState::Defeat;
+            gameState = GameState::Defeat;            
+        }
+        if (gameState == GameState::Defeat || gameState == GameState::Victory) {
+            player->setUpNewTurn();
+            for (int i = 0; i < AMOUNT_NORMAL_MONSTER; i++) {
+                normalMonster[i].setUpNewTurn(HP_NORMAL_MONSTER, PosXListNormalMonster[i], PosYListNormalMonster[i]);
+            }
+            for (int i = 0; i < AMOUNT_LAZER_MONSTER; i++) {
+                lazerMonster[i].setUpNewTurn(HP_LAZER_MONSTER, PosXListLazerMonster[i], PosYListLazerMonster[i]);
+            }
+            boss->setUpNewTurn(HP_BOSS_MONSTER, 900, 300);
         }
         /*for (int i = 0; i < AMOUNT_LAZER_MONSTER; i++) {
             lazerMonster[i].render(renderer);
         }*/
-        renderGame(renderer);
+        renderGame();
         SDL_Delay(50);
     }     
 }
 
-void GameObject::gameIntro(SDL_Event& e, SDL_Renderer* renderer) {
+void GameObject::gameIntro() {
     while (gameState == GameState::Intro) {
         playAudio(gameIntroAudio);
         while (SDL_PollEvent(&e) != 0) {
@@ -202,7 +263,7 @@ void GameObject::gameIntro(SDL_Event& e, SDL_Renderer* renderer) {
                 ;
             }
         }
-        renderGame(renderer);
+        renderGame();
         while (gameState == GameState::Instruction) {
             while (SDL_PollEvent(&e) != 0) {
                 if (e.type == SDL_QUIT) {
@@ -219,13 +280,13 @@ void GameObject::gameIntro(SDL_Event& e, SDL_Renderer* renderer) {
                     }
                 }
             }
-            renderGame(renderer);
+            renderGame();
         }
     }
       
 }
 
-void GameObject::gameOver(SDL_Event& e, SDL_Renderer* renderer) {
+void GameObject::gameOver() {
     while (gameState == GameState::Victory || gameState == GameState::Defeat) {
         playAudio(chibichibiAudio);
         while (SDL_PollEvent(&e) != 0) {
@@ -247,12 +308,14 @@ void GameObject::gameOver(SDL_Event& e, SDL_Renderer* renderer) {
                 }
             }
         }
-        renderGame(renderer);
+        renderGame();
     }   
 }
 
-void GameObject::Running(SDL_Event& e, SDL_Renderer* renderer) {
-    gameIntro(e, renderer);
-    gamePlay(e, renderer);
-    gameOver(e, renderer);
+void GameObject::Running() {
+    while (gameState != GameState::Quit) {
+        gameIntro();
+        gamePlay();
+        gameOver();
+    } 
 }
