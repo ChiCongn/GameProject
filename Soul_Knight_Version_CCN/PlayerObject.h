@@ -4,36 +4,40 @@
 
 #include"Common.h"
 #include"BaseObject.h"
-#include"Support.h"
+#include"Texture.h"
 #include"Defs.h"
-//#include"ThreatObject.h"
+#include<string>
+#include"Tile.h"
 
 class PlayerObject :public BaseObject {
-	//int x_val, y_val;
-	bool attack;
-	int hp, ex, damage;
-	SupportObject* Hp;
-	SupportObject* Ex;
-	//SupportObject HighScore, Score;
+	int x_val, y_val;
+	Uint32 preTimeSkill;
+	int hp, mana, damage, score;
+	Texture* Hp;
+	Texture* Mana;
+	Texture* Score;
 	Direction direction;
-	AnimatedSprite* playerSkill;
-	/*Mix_Chunk* getDamageAudio;
-	Mix_Chunk* levelUpAudio;
+
 	Mix_Chunk* attackAudio;
+	/*Mix_Chunk* getDamageAudio;
+	Mix_Chunk* levelUpAudio;	
 	Mix_Chunk* getExAudio;*/
 	
 public:
-	void initPlayer(SDL_Renderer* renderer);
+	Animation* playerSkill;
+
+	bool attack;
+	PlayerObject(SDL_Renderer* renderer);
 	///PlayerObject();
-	SDL_Rect getCoordinatesAnimatedSprite() { return playerSkill->getCoordinates(); }
+	SDL_Rect getCoordinatesAnimation() { return playerSkill->getCoordinates(); }
 	~PlayerObject();
-	bool isDead() { return hp <= 0; }
-	//void handleMoveAction(SDL_Event& e);
-	void playerMove(SDL_Event& e, const SDL_Rect obstaclePos[]);
+	bool isDead() const { return hp <= 0; }
+	void handleMoveAction(Map* map);
+	void move();
 	void attackThreat(SDL_Event e);
 	void getDamge(int _damage) { hp -= _damage; }
-	void getExperience(int _ex) { ex += _ex; }
-	void levelUp();
+	void updateScore(const int _score, SDL_Renderer* renderer);
+
 	void renderPlayer(SDL_Renderer* renderer);
 	void setUpNewTurn();
 };

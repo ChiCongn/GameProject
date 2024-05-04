@@ -52,7 +52,7 @@ void waitUntilKeyPressed()
     }
 }
 
-SDL_Texture* loadImage(std::string path, SDL_Renderer* renderer)
+SDL_Texture* loadImage(const std::string path, SDL_Renderer* renderer)
 {
     SDL_Texture* newTexture = nullptr;
     SDL_Surface* loadedSurface = IMG_Load(path.c_str());
@@ -71,7 +71,7 @@ SDL_Texture* loadImage(std::string path, SDL_Renderer* renderer)
     return newTexture;
 }
 
-TTF_Font* loadFont(std::string font_path) {
+TTF_Font* loadFont(const std::string font_path) {
     if (TTF_Init() == -1) {
         std::cout << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
         return nullptr;
@@ -85,9 +85,9 @@ TTF_Font* loadFont(std::string font_path) {
     return font;
 }
 
-SDL_Texture* loadText(std::string text,std::string font_path, SDL_Renderer* renderer) {   
-    TTF_Font* font = loadFont(font_path);
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), { 255,0,0 });
+SDL_Texture* loadText(const std::string text, const SDL_Color color, const std::string fontPath, SDL_Renderer* renderer) {   
+    TTF_Font* font = loadFont(fontPath);
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
     if (textSurface == nullptr) {
         std::cout << "Failed to render text surface: " << TTF_GetError() << std::endl;
         TTF_CloseFont(font);

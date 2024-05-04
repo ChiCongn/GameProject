@@ -4,13 +4,13 @@
 #ifndef BASE_OBJECT_H
 #define BASE_OBJECT_H
 #include"Common.h"
-#include"AnimatedSprite.h"
+#include"Animation.h"
 
 class BaseObject {
 protected:
 	int speed;
 	SDL_Rect coordinates;
-	AnimatedSprite* sprite;
+	Animation* animation;
 
 public:
 	BaseObject();

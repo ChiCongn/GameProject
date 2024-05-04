@@ -1,12 +1,2 @@
-﻿  AnimatedSprite.cpp
-  BaseObject.cpp
-  BulletObject.cpp
-  Common.cpp
-  GameObject.cpp
-  ObstacleObject.cpp
-  PlayerObject.cpp
-  Support.cpp
-  ThreatObject.cpp
-  main.cpp
-  Generating Code...
+﻿  PlayerObject.cpp
   Soul_Knight_Version_CCN.vcxproj -> D:\GitHub\Soul_Knight_Version_CCN\x64\Debug\Soul_Knight_Version_CCN.exe

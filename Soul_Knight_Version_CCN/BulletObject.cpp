@@ -7,15 +7,12 @@ void BulletObject::initialize(std::string path,int _speed, Direction _direction,
 	texture = loadImage(path, renderer);
 }
 
-void BulletObject::destructBullet() {
+
+BulletObject::~BulletObject() {
 	if (texture != nullptr) {
 		SDL_DestroyTexture(texture);
 		texture = nullptr;
 	}
-}
-
-BulletObject::~BulletObject() {
-	destructBullet();
 }
 
 void BulletObject::BulletMove() {

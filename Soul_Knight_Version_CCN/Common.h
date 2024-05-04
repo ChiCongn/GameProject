@@ -17,10 +17,10 @@ void logSDLError(std::ostream& os,
 	const std::string& msg, bool fatal = false);
 void waitUntilKeyPressed();
 
-TTF_Font* loadFont(std::string font_path);
-SDL_Texture* loadText(std::string text, std::string font_path, SDL_Renderer* renderer);
-SDL_Texture* loadImage(std::string path, SDL_Renderer* renderer);
-Mix_Chunk* loadAudio(std::string audioPath);
+TTF_Font* loadFont(const std::string font_path);
+SDL_Texture* loadText(const std::string text, const SDL_Color color, const std::string fontPath, SDL_Renderer* renderer);
+SDL_Texture* loadImage(const std::string path, SDL_Renderer* renderer);
+Mix_Chunk* loadAudio(const std::string audioPath);
 void playAudio(Mix_Chunk* sound);
 
 bool checkCollision(const SDL_Rect a,const SDL_Rect b);

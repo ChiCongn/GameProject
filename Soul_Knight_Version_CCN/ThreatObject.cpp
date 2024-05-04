@@ -20,7 +20,7 @@
 
 void ThreatObject::destroyThreat() {
 	std::cout << "start destructThreat\n";
-	delete sprite;
+	delete animation;
 	std::cout << "ok delete sprite*\n";
 	if (AttackPlayerAudio != nullptr) {
 		Mix_FreeChunk(AttackPlayerAudio);
@@ -47,7 +47,8 @@ void NormalMonster::initNormalMonster(int _x, int _y,std::string bulletPath, SDL
 	coordinates.x = _x, coordinates.y = _y;
 	coordinates.w = NORMAL_MONSTER_WIDTH;
 	coordinates.h = NORMAL_MONSTER_HEIGHT;
-	sprite=new AnimatedSprite(IMAGE_NORMAL_MONSTER_PATH,NORMAL_MONSTER_WIDTH,NORMAL_MONSTER_HEIGHT, NORMAL_MONSTER_FRAMES, NORMAL_MONSTER_CLIPS, renderer);
+	animation=new Animation(IMAGE_NORMAL_MONSTER_LEFT_PATH, IMAGE_NORMAL_MONSTER_RIGHT_PATH, NORMAL_MONSTER_WIDTH,NORMAL_MONSTER_HEIGHT, 
+		NORMAL_MONSTER_FRAMES, NORMAL_MONSTER_CLIPS, renderer);
 	for (int i = 0; i < AMOUNT_BULLET_NORMAL_MONSTER/4 ; i++) {
 		normalMonsterBullet[i].initialize(IMAGE_BULLET_NORMAL_MONSTER_PATH, SPEED_NORMAL_MONSTER_BULLET,Direction::NorthWest, renderer);
 		normalMonsterBullet[i].setCoordinates(coordinates.x, coordinates.y);
@@ -102,13 +103,9 @@ void NormalMonster::normalMonsterMove(const SDL_Rect obstaclePos[]) {
 }
 
 void NormalMonster::render(SDL_Renderer* renderer) {
-	sprite->setCoordinates(coordinates.x, coordinates.y);
-	if (direction == Direction::West) {
-		sprite->renderAnimatedSprite(renderer, SDL_FLIP_HORIZONTAL);
-	}
-	else {
-		sprite->renderAnimatedSprite(renderer, SDL_FLIP_NONE);
-	}
+	animation->setCoordinates(coordinates.x, coordinates.y);
+	animation->renderAnimation(renderer, direction);
+	
 	for (int i = 0; i < AMOUNT_BULLET_NORMAL_MONSTER / 4; i++) {
 		normalMonsterBullet[i].renderBullet(renderer);
 		//std::cout << "OK render Normal Monster's Bullet\n";
@@ -149,8 +146,8 @@ void LazerMonster::initLazerMonster(int _x, int _y, SDL_Renderer* renderer) {
 	coordinates.x = _x, coordinates.y = _y;
 	coordinates.w = LAZER_MONSTER_WIDTH;
 	coordinates.h = LAZER_MONSTER_HEIGHT;
-	sprite=new AnimatedSprite(IMAGE_LAZER_MONSTER_PATH,LAZER_MONSTER_WIDTH,LAZER_MONSTER_HEIGHT, LAZER_MONSTER_FRAMES, LAZER_MONSTER_CLIPS, renderer);
-
+	animation =new Animation(IMAGE_LAZER_MONSTER_LEFT_PATH, IMAGE_LAZER_MONSTER_RIGHT_PATH, LAZER_MONSTER_WIDTH,
+		LAZER_MONSTER_HEIGHT, LAZER_MONSTER_FRAMES, LAZER_MONSTER_CLIPS, renderer);
 }
 
 LazerMonster::~LazerMonster() {
@@ -158,14 +155,8 @@ LazerMonster::~LazerMonster() {
 }
 
 void LazerMonster::render(SDL_Renderer* renderer) {
-	sprite->setCoordinates(coordinates.x, coordinates.y);
-	if (direction == Direction::West) {
-		sprite->renderAnimatedSprite(renderer, SDL_FLIP_HORIZONTAL);		
-	}
-	else {
-		sprite->renderAnimatedSprite(renderer,SDL_FLIP_NONE);	
-	}
-
+	animation->setCoordinates(coordinates.x, coordinates.y);
+	animation->renderAnimation(renderer, direction);
 }
 
 void LazerMonster::lazerMonsterMove() {
@@ -211,7 +202,8 @@ void BossMonster::initBossMonster(int _x, int _y,std::string bulletPath, SDL_Ren
 	coordinates.x = _x, coordinates.y = _y;
 	coordinates.w = BOSS_MONSTER_WIDTH;
 	coordinates.h = BOSS_MONSTER_HEIGHT;
-	sprite=new AnimatedSprite(IMAGE_BOSS_MONSTER_PATH, BOSS_MONSTER_WIDTH, BOSS_MONSTER_HEIGHT, BOSS_MONSTER_FRAMES, BOSS_MONSTER_CLIPS, renderer);
+	animation=new Animation(IMAGE_BOSS_MONSTER_LEFT_PATH, IMAGE_BOSS_MONSTER_RIGHT_PATH, BOSS_MONSTER_WIDTH, 
+		BOSS_MONSTER_HEIGHT, BOSS_MONSTER_FRAMES, BOSS_MONSTER_CLIPS, renderer);
 
 	for (int i = 0; i < AMOUNT_BULLET_BOSS_MONSTER / 4; i++) {
 		bulletBossMonster[i].initialize(IMAGE_BULLET_BOSS_MONSTER_PATH, SPEED_BOSS_MONSTER_BULLET, Direction::NorthEast, renderer);
@@ -236,13 +228,8 @@ void BossMonster::initBossMonster(int _x, int _y,std::string bulletPath, SDL_Ren
 }
 
 void BossMonster::renderBossMonster(SDL_Renderer* renderer) {
-	sprite->setCoordinates(coordinates.x, coordinates.y);
-	if (direction == Direction::West) {
-		sprite->renderAnimatedSprite(renderer,SDL_FLIP_HORIZONTAL);
-	}
-	else {
-		sprite->renderAnimatedSprite(renderer,SDL_FLIP_NONE);
-	}
+	animation->setCoordinates(coordinates.x, coordinates.y);
+	animation->renderAnimation(renderer,direction);
 }
 
 void BossMonster::BossMove() {

@@ -1,193 +1,152 @@
 
 #include"PlayerObject.h"
 
-void PlayerObject::initPlayer(SDL_Renderer* renderer) {
+
+PlayerObject::PlayerObject(SDL_Renderer* renderer) {	
+	std::cout<<"init dafault playerObject\n";
 	std::cout << "start init Player\n";
-	hp = MAX_HP_PLAYER, ex = 0;
+	hp = MAX_HP_PLAYER, mana = 200, score = 0;
+	preTimeSkill = SDL_GetTicks();
 	//x_val = y_val = 0;
 	damage = DEFAUT_DAMAGE_PLAYER;
 	speed = DEFAULT_SPEED_PLAYER;
 	coordinates.x = 0;
-	coordinates.y = SCREEN_HEIGHT - PLAYER_HEIGHT;
+	coordinates.y = 0;
 	coordinates.w = PLAYER_WIDTH;
 	coordinates.h = PLAYER_HEIGHT;
 
 	attack = false;
 	direction = Direction::East;
 	std::cout << "start init AnimatedSpirte*\n";
-	sprite = new AnimatedSprite(IMAGE_PLAYER_PATH, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_FRAMES, PLAYER_CLIPS, renderer);
+	animation = new Animation(IMAGE_PLAYER_LEFT_PATH, IMAGE_PLAYER_RIGHT_PATH, PLAYER_WIDTH,
+		PLAYER_HEIGHT, MAGICAN_FRAMES, MAGICAN_CLIPS, renderer);
+
 	std::cout << "ok init AnimatedSprite* -> start init playerSkill*\n";
-	playerSkill = new AnimatedSprite(IMAGE_PLAYER_SKILL_PATH, PLAYER_SKILL_WIDTH, PLAYER_SKILL_HEIGHT, PLAYER_SKILL_FRAMES, PLAYER_SKILL_CLIPS, renderer);
+	playerSkill = new Animation(IMAGE_SLASH_LEFT_PATH, IMAGE_SLASH_RIGHT_PATH, PLAYER_SKILL_WIDTH, PLAYER_SKILL_HEIGHT,
+		PLAYER_SLASH_FRAMES, PLAYER_SLASH_CLIPS, renderer);
+
 	std::cout << "ok init playerSkill*-> start init Hp*\n";
-	Hp = new SupportObject(0, 0, 20);
-	Hp->setImageSupport(IMAGE_HP_PATH, renderer);
+	Hp = new Texture(90, 20, 57, 14);
+	Hp->setImageTexture(IMAGE_HP_PATH, renderer);
 	std::cout << "ok init Hp*->start init Ex*\n";
-	Ex = new SupportObject(0, 10, 20);
-	Ex->setImageSupport(IMAGE_EX_PATH, renderer);
+	Mana = new Texture(90, 50, 116, 14);
+	Mana->setImageTexture(IMAGE_EX_PATH, renderer);
+	Score = new Texture(950, 0, 50, 50);
+	Score->setText(std::to_string(0), RED_COLOR, FONT_PATH, renderer);
 	std::cout << "ok init Player\n";
+
+	attackAudio = loadAudio(AUDIO_ATTACK_PATH);
+	std::cout << "ok constructor PlayeObject\n";
 }
 
-//PlayerObject::PlayerObject() {	
-//	std::cout<<"init dafault playerObject\n";
-//	//initPlayer(renderer);
-//	std::cout << "ok constructor PlayeObject\n";
-//}
-
 PlayerObject::~PlayerObject() {
-	delete sprite;
-	//delete playerSkill;
+	delete animation;
 	delete Hp;
-	delete Ex;
+	delete Mana;
 	delete playerSkill;
-	/*Mix_FreeChunk(attackAudio);
-	Mix_FreeChunk(getDamageAudio);
+	Mix_FreeChunk(attackAudio);
+	/*Mix_FreeChunk(getDamageAudio);
 	Mix_FreeChunk(levelUpAudio);
 	Mix_FreeChunk(getExAudio);*/
 	//attackAudio = getDamageAudio = levelUpAudio = getExAudio = nullptr;
 }
 
 void PlayerObject::renderPlayer(SDL_Renderer* renderer) {
-	sprite->setCoordinates(coordinates.x, coordinates.y);
-	if (direction == Direction::West) {
-		sprite->renderAnimatedSprite(renderer, SDL_FLIP_HORIZONTAL);
-	}
-	else {
-		sprite->renderAnimatedSprite(renderer, SDL_FLIP_NONE);
-	}
-	if (attack) {	
-		if (direction == Direction::East) {
-			playerSkill->setCoordinates(coordinates.x, coordinates.y - 18);
-			playerSkill->renderAnimatedSprite(renderer, SDL_FLIP_HORIZONTAL);
-		}
-		else {
-			playerSkill->setCoordinates(coordinates.x - 15, coordinates.y-18);
-			playerSkill->renderAnimatedSprite(renderer, SDL_FLIP_NONE);
-		}
-	}
-	Hp->render(hp, renderer);
-	Ex->render(ex, renderer);
-	attack = false;
+	animation->setCoordinates(coordinates.x, coordinates.y);
+	animation->renderAnimation(renderer, direction);
+	if (attack) {
+		if(direction==Direction::West)
+			playerSkill->setCoordinates(coordinates.x-32, coordinates.y - 15);
+		else
+			playerSkill->setCoordinates(coordinates.x, coordinates.y - 15);
+
+		playerSkill->renderAnimation(renderer, direction);
+		attack = false;
+		//playAudio(attackAudio);
+	}	
+	Hp->render(int(hp * 157.0/MAX_HP_PLAYER) , renderer);
+	Mana->render(int(mana*118.0/200), renderer);
+	Score->render(50, renderer);
 	//playerSkill->setCoordinates(0, 0);
 }
 
-//void PlayerObject::handleMoveAction(SDL_Event& e) {
-//	if (e.type == SDL_KEYDOWN) {
-//		switch (e.key.keysym.sym)
-//		{
-//		case SDLK_UP:
-//			y_val -= speed;
-//			break;
-//		case SDLK_DOWN:
-//			y_val += speed;
-//			break;
-//		case SDLK_RIGHT:
-//			direction = Direction::East;
-//			x_val += speed;
-//			break;
-//		case SDLK_LEFT:
-//			direction = Direction::West;
-//			x_val -= speed;
-//			break;
-//		default:
-//			break;
+void PlayerObject::handleMoveAction(Map* map) {
+	const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+	if (currentKeyStates[SDL_SCANCODE_UP] || currentKeyStates[SDL_SCANCODE_W]) {
+		y_val -= speed;
+	}		
+	if (currentKeyStates[SDL_SCANCODE_DOWN] || currentKeyStates[SDL_SCANCODE_S]) {
+		y_val += speed;
+	}			
+	if (currentKeyStates[SDL_SCANCODE_RIGHT] || currentKeyStates[SDL_SCANCODE_D]) {
+		direction = Direction::East;
+		x_val += speed;
+	}			
+	if (currentKeyStates[SDL_SCANCODE_LEFT] || currentKeyStates[SDL_SCANCODE_A]){
+		direction = Direction::West;
+		x_val -= speed;
+	}
+	move();
+	//if(coordinates.x < 200 || coordinates.y)
+	map->handleCamera(x_val, y_val);
+		
+	x_val = y_val = 0;
+}
+
+//void PlayerObject::playerMove() {
+//	//std::cout << "PlayerMove\n";
+//	if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w) {
+//		coordinates.y -= speed;
+//		if (coordinates.y < 50) {
+//			coordinates.y = 50;
 //		}
+//		
 //	}
-//	else if (e.type == SDL_KEYUP) {
-//		switch (e.key.keysym.sym)
-//		{
-//		case SDLK_UP:
-//			y_val += speed;
-//			break;
-//		case SDLK_DOWN:
-//			y_val -= speed;
-//			break;
-//		case SDLK_RIGHT:
-//			x_val -= speed;
-//			break;
-//		case SDLK_LEFT:
-//			x_val += speed;
-//			break;
-//		default:
-//			break;
+//	else if (e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_s) {
+//		coordinates.y += speed;
+//		if (coordinates.y + PLAYER_HEIGHT > SCREEN_HEIGHT) {
+//			coordinates.y -= speed;
+//			coordinates.y = SCREEN_HEIGHT - PLAYER_HEIGHT;
 //		}
+//		
+//	}
+//	else if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a) {
+//		direction = Direction::West;
+//		coordinates.x -= speed;
+//		if (coordinates.x < 0) {
+//			coordinates.x = 0;
+//		}
+//		/*for (int i = 0; i < 12; i++) {
+//			if (checkCollision(obstacle[i], coordinates)) {
+//				coordinates.x = obstacle[i].x + obstacle[i].w;
+//				break;
+//			}
+//		}*/
+//	}
+//	else if (e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d) {
+//		direction = Direction::East;
+//		coordinates.x += speed;
+//		if (coordinates.x + PLAYER_WIDTH > SCREEN_WIDTH) {
+//			coordinates.x = SCREEN_WIDTH - PLAYER_WIDTH;
+//		}
+//		
 //	}
 //	else {
 //		;
 //	}
 //}
 
-void PlayerObject::playerMove(SDL_Event& e, const SDL_Rect obstacle[]) {
-	//std::cout << "PlayerMove\n";
-	/*coordinates.x += x_val;
-	coordinates.y += y_val;*/
-	switch (e.key.keysym.sym)
-	{
-	case SDLK_UP:
-		coordinates.y -= speed;
-		if (coordinates.y < 50) {
-			coordinates.y = 50;
-		}
-		for (int i = 0; i < 12; i++) {
-			if (checkCollision(obstacle[i], coordinates)) {
-				coordinates.y = obstacle[i].y + obstacle[i].h;
-				break;
-			}
-		}
-		break;
-				
-	case SDLK_DOWN:
-		coordinates.y += speed;
-		if (coordinates.y + PLAYER_HEIGHT > SCREEN_HEIGHT) {
-			coordinates.y -= speed;
-			coordinates.y = SCREEN_HEIGHT - PLAYER_HEIGHT;
-		}
-		for (int i = 0; i < 12; i++) {
-			if (checkCollision(obstacle[i], coordinates)) {
-				coordinates.y = obstacle[i].y - PLAYER_HEIGHT;
-				break;
-			}
-		}
-		break;
-
-	case SDLK_LEFT:
-		direction = Direction::West;
-		coordinates.x -= speed;
-		if (coordinates.x < 0) {
-			coordinates.x = 0;
-		}
-		for (int i = 0; i < 12; i++) {
-			if (checkCollision(obstacle[i], coordinates)) {
-				coordinates.x = obstacle[i].x + obstacle[i].w;
-				break;
-			}
-		}
-		break;
-
-	case SDLK_RIGHT:
-		direction = Direction::East;
-		coordinates.x += speed;
-		if (coordinates.x + PLAYER_WIDTH > SCREEN_WIDTH) {
-			coordinates.x = SCREEN_WIDTH - PLAYER_WIDTH;
-		}
-		for (int i = 0; i < 12; i++) {
-			if (checkCollision(obstacle[i], coordinates)) {
-				coordinates.x = obstacle[i].x - PLAYER_WIDTH;
-				break;
-			}
-		}
-		break;
-
-	default:
-		break;
-	}
-}
-
-void PlayerObject::levelUp() {
-	if (ex >= 100) {
-		ex -= 100;
-		damage += ADD_DAMAGE;
-		speed += ADD_SPEED;
-	}
+void PlayerObject::move() {
+	coordinates.x += x_val;
+	coordinates.y += y_val;
+	if (coordinates.x < 0)
+		coordinates.x = 0;
+	if (coordinates.x > SCREEN_WIDTH - PLAYER_WIDTH)
+		coordinates.x = SCREEN_WIDTH - PLAYER_WIDTH;
+	if (coordinates.y < 0)
+		coordinates.y = 0;
+	if (coordinates.y > SCREEN_HEIGHT - PLAYER_HEIGHT)
+		coordinates.y = SCREEN_HEIGHT - PLAYER_HEIGHT;
 }
 
 void PlayerObject::attackThreat(SDL_Event e) {
@@ -198,19 +157,13 @@ void PlayerObject::attackThreat(SDL_Event e) {
 
 void PlayerObject::setUpNewTurn() {
 	hp = MAX_HP_PLAYER;
-	ex = 0;
+	mana = 200;
 	damage = DEFAUT_DAMAGE_PLAYER;
 	setCoordinates(0, SCREEN_HEIGHT - PLAYER_HEIGHT);
 }
 
-//void PlayerObject::collisionWithThreat(BossMonster* boss, NormalMonster* normalMonster, LazerMonster* lazerMonster) {
-//	if (checkCollision(coordinates, boss->getCoordinates())) {
-//		getDamge(DAMAGE_BOSS_MONSTER);
-//	}
-//	for (int i = 0; i < AMOUNT_BULLET_BOSS_MONSTER; i++) {
-//		if(checkCollision(coor))
-//	}
-//	if (checkCollision(coordinates, normalMonster->getCoordinates())) {
-//		getDamge(DAMAGE_NORMAL_MONSTER);
-//	}
-//}
+
+void PlayerObject::updateScore(const int _score, SDL_Renderer* renderer) {
+	score += _score;
+	Score->setText(std::to_string(score), RED_COLOR, FONT_PATH, renderer);
+}

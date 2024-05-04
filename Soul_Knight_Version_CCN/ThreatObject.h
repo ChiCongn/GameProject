@@ -17,6 +17,7 @@ protected:
 	Mix_Chunk* DeadAudio;
 	Mix_Chunk* AttackPlayerAudio;
 public:
+	bool isCount = true;
 	bool isDead() { return hp <= 0; }
 	bool isReadyCauseDamage() {
 		return currentTimeCollision - preTimeCollision >= NEXT_TIME_CAUSE_DAMAGE;
@@ -33,7 +34,7 @@ public:
 	//virtual~ThreatObject();
 	void setUpNewTurn(int _hp, int x, int y);
 	void destroyThreat();
-	//virtual void render(SDL_Renderer* renderer);
+
 };
 
 class NormalMonster :public ThreatObject {	
