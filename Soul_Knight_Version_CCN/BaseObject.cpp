@@ -9,7 +9,7 @@ BaseObject::BaseObject() {
 
 BaseObject::~BaseObject() {
 	std::cout<<"start ~BaseObject\n->delete sprite*";
-	//delete sprite;
+	//delete animation;
 	std::cout << "ok delete sprite* of BaseObject->ok~BaseObject\n";
 }
 

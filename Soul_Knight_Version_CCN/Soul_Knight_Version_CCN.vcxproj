@@ -139,10 +139,11 @@
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="GameLevel.cpp" />
     <ClCompile Include="PlayerObject.cpp" />
+    <ClCompile Include="Skill.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="ThreatObject.cpp" />
+    <ClCompile Include="Monster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
@@ -151,10 +152,11 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Defs.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Tile.h" />
+    <ClInclude Include="GameLevel.h" />
     <ClInclude Include="PlayerObject.h" />
+    <ClInclude Include="Skill.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="ThreatObject.h" />
+    <ClInclude Include="Monster.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

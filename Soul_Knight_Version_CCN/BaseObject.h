@@ -1,17 +1,16 @@
 
-#pragma once
+#include"Common.h"
+#include"Animation.h"
 
 #ifndef BASE_OBJECT_H
 #define BASE_OBJECT_H
-#include"Common.h"
-#include"Animation.h"
 
 class BaseObject {
 protected:
 	int speed;
+	//Animation* animation;
 	SDL_Rect coordinates;
-	Animation* animation;
-
+	
 public:
 	BaseObject();
 	virtual ~BaseObject();

@@ -1,2 +1,12 @@
-﻿  PlayerObject.cpp
+﻿  Monster.cpp
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(334,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(389,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(433,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(460,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(467,21): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(558,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(579,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(633,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(653,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(668,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Soul_Knight_Version_CCN.vcxproj -> D:\GitHub\Soul_Knight_Version_CCN\x64\Debug\Soul_Knight_Version_CCN.exe

@@ -23,19 +23,28 @@ void Texture::setText(const std::string text, const SDL_Color color, const std::
 	texture = loadText(text, color, fontPath, renderer);
 }
 
-void Texture::render(int width, SDL_Renderer* renderer) {
-	coordinates.w = width;
+void Texture::render(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, texture, NULL, &coordinates);
 }
 
+void Texture::move(int x, int y) {
+	coordinates.x += x;
+	coordinates.y += y;
+}
+
+void Texture::renderEx(SDL_Renderer* renderer, double angle) {
+	SDL_RenderCopyEx(renderer, texture, NULL, &coordinates, angle, NULL, SDL_FLIP_NONE);
+}
+
+
 
 void MenuGame::initMenuGame(SDL_Renderer* renderer) {
+	std::cout << "init menu game \n";
 	gameIntro = loadImage(IMAGE_GAME_INTRO_PATH, renderer);
 	gameInstruction = loadImage(IMAGE_GAME_INSTRUCTION_PATH, renderer);
 	gameVictory = loadImage(IMAGE_GAME_VICTORY_PATH, renderer);
 	gameDefeat = loadImage(IMAGE_GAME_DEFEAT_PATH, renderer);
-	chibichibi = new Animation(IMAGE_CHIBI_CHIBI_PATH, IMAGE_CHIBI_CHIBI_PATH, CHIBI_CHIBI_WIDTH, CHIBI_CHIBI_HEIGHT, 
-		CHIBI_CHIBI_FRAMES, CHIBI_CHIBI_CLIPS, renderer);	
+	std::cout << "ok init menu game\n";
 }
 
 MenuGame::~MenuGame() {
@@ -44,8 +53,7 @@ MenuGame::~MenuGame() {
 		gameIntro = nullptr;
 	}
 	if (gameDefeat != nullptr) {
-		SDL_DestroyTexture(gameDefeat);
-		
+		SDL_DestroyTexture(gameDefeat);		
 	}
 	
 }
@@ -64,7 +72,6 @@ void MenuGame::renderMenuGame(SDL_Renderer* renderer, GameState gameState) {
 	case GameState::Defeat:
 		//playAudio(chibichibiAudio);
 		SDL_RenderCopy(renderer, gameDefeat, NULL, NULL);
-		chibichibi->renderAnimation(renderer, Direction::West);
 		break;
 	case GameState::Victory:
 		SDL_RenderCopy(renderer, gameVictory, NULL, NULL);
