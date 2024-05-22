@@ -6,33 +6,13 @@
 #include"Monster.h"
 #include"Defs.h"
 #include<fstream>
-#include"GameLevel.h"
+#include"Structure.h"
+#include"Menu.h"
+#include"SoundEffect.h"
 
 
-class GameObject {		
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	SDL_Event e;
-	Uint32 startTime;
-	Uint32 currentTime;
-
-	MenuGame* menu = new MenuGame;
-	Texture* time;
-	Texture* pause;
-	int highScore;
-	Texture* HighScore;
-	SDL_Texture* map;
-	
-	BossMonster* boss;
-	Structure* tower;
-	PlayerObject* player;
-
-	Mix_Chunk* gameDefeatAudio;
-	Mix_Chunk* gameVictoryAudio;
-	Mix_Chunk* gameIntroAudio;
-
+class GameObject {	
 public:
-	GameState gameState;
 	void initializeGame();
 	
 	GameObject();
@@ -45,11 +25,35 @@ public:
 	void renderGame();
 	void Running();
 
+
+	void hadleMovement();
+	void handlePlayer();
+	void handleBossMonster();
+	void handleStructures();
+
+	bool isOver();
 	void updateTime();
 	void newTurn();
-	int takeHighScore();
-	void renderHighScore();
 	void countdown();
+private:
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	SDL_Event e;
+
+	Uint32 startTime;
+	Uint32 currentTime;
+	//SoundManager* sounds;
+
+	GameState gameState;
+
+	MenuGame* menu;
+	Texture* time;
+	Texture* pause;
+	Map* map;
+
+	BossMonster* boss;
+	Structure** tower;
+	PlayerObject* player;
 };
 
 #endif

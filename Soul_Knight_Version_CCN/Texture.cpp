@@ -20,6 +20,10 @@ void Texture::setImageTexture(std::string imagePath, SDL_Renderer* renderer) {
 }
 
 void Texture::setText(const std::string text, const SDL_Color color, const std::string fontPath, SDL_Renderer* renderer) {
+	if (texture != nullptr) {
+		SDL_DestroyTexture(texture);
+		texture = nullptr;
+	}
 	texture = loadText(text, color, fontPath, renderer);
 }
 
@@ -28,57 +32,70 @@ void Texture::render(SDL_Renderer* renderer) {
 }
 
 void Texture::move(int x, int y) {
-	coordinates.x += x;
-	coordinates.y += y;
-}
-
-void Texture::renderEx(SDL_Renderer* renderer, double angle) {
-	SDL_RenderCopyEx(renderer, texture, NULL, &coordinates, angle, NULL, SDL_FLIP_NONE);
+	coordinates.x -= x;
+	coordinates.y -= y;
 }
 
 
-
-void MenuGame::initMenuGame(SDL_Renderer* renderer) {
-	std::cout << "init menu game \n";
-	gameIntro = loadImage(IMAGE_GAME_INTRO_PATH, renderer);
-	gameInstruction = loadImage(IMAGE_GAME_INSTRUCTION_PATH, renderer);
-	gameVictory = loadImage(IMAGE_GAME_VICTORY_PATH, renderer);
-	gameDefeat = loadImage(IMAGE_GAME_DEFEAT_PATH, renderer);
-	std::cout << "ok init menu game\n";
+// Map=====================================================
+Map::Map(const std::string& path, SDL_Renderer* renderer) {
+	map = loadImage(MAP_PATH, renderer);
+	deltaX = deltaY = 0;
+	camera.x = camera.y = 100;
+	camera.w = 1000;
+	camera.h = SCREEN_HEIGHT;
+	Map::takeTileMapMatrix();
 }
 
-MenuGame::~MenuGame() {
-	if (gameIntro != nullptr) {
-		SDL_DestroyTexture(gameIntro);
-		gameIntro = nullptr;
+Map::~Map() {
+	SDL_DestroyTexture(map);
+}
+
+void Map::render(SDL_Renderer* renderer) {
+	SDL_RenderCopy(renderer, map, &camera, &VIEWPORT);
+}
+
+void Map::move(int& x, int& y) {
+	camera.x += x;
+	camera.y += y;
+	if (camera.x < 0) {
+		camera.x = 0;
+		x = 0;
 	}
-	if (gameDefeat != nullptr) {
-		SDL_DestroyTexture(gameDefeat);		
+	if ( camera.x > MAP_WIDTH - VIEWPORT_WIDTH) {
+		camera.x = MAP_WIDTH - VIEWPORT_WIDTH;
+		x = 0;
 	}
-	
+	if (camera.y < 0) {
+		camera.y = 0;
+		y = 0;
+	}
+	if (camera.y > MAP_HEIGHT - SCREEN_HEIGHT) {
+		camera.y = MAP_HEIGHT - SCREEN_HEIGHT;
+		y = 0;
+	}
 }
 
-void MenuGame::renderMenuGame(SDL_Renderer* renderer, GameState gameState) {
-	switch (gameState)
-	{
-	case GameState::Intro:
-		//std::cout << "render GameIntro\n";
-		SDL_RenderCopy(renderer, gameIntro, NULL, NULL);
-		//playAudio(gameIntroAudio);
-		break;
-	case GameState::Instruction:
-		SDL_RenderCopy(renderer, gameInstruction, NULL, NULL);
-		break;
-	case GameState::Defeat:
-		//playAudio(chibichibiAudio);
-		SDL_RenderCopy(renderer, gameDefeat, NULL, NULL);
-		break;
-	case GameState::Victory:
-		SDL_RenderCopy(renderer, gameVictory, NULL, NULL);
-		//playAudio(gameVictoryAudio);
-		break;
-	default:
-		std::cout << "default menuGame :(( \n";
-		break;
+bool Map::isBoundary() {
+	if (camera.x == 0 || camera.x == MAP_WIDTH - VIEWPORT_WIDTH || camera.y == 0 || camera.y == MAP_HEIGHT - VIEWPORT_HEIGHT)
+		return true;
+	return false;
+}
+
+void Map::newTurn() {
+	deltaX = deltaY = 0;
+	camera.x = camera.y = 100;
+}
+
+void Map::takeTileMapMatrix() {
+	std::ifstream file(MATRIX_TILE_MAP_PATH);
+	if (!file.is_open()) {
+		std::cout << "Error! Can not open file: " << std::endl;
 	}
+	for (int i = 0; i < MAP_ROW; i++) {
+		for (int j = 0; j < MAP_COL; j++) {
+			file >> tile_map[i][j];
+		}
+	}
+	file.close();
 }

@@ -134,12 +134,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="BaseObject.cpp" />
-    <ClCompile Include="BulletObject.cpp" />
+    <ClCompile Include="SoundEffect.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="GameLevel.cpp" />
+    <ClCompile Include="Structure.cpp" />
     <ClCompile Include="PlayerObject.cpp" />
     <ClCompile Include="Skill.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -147,12 +147,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
-    <ClInclude Include="BaseObject.h" />
-    <ClInclude Include="BulletObject.h" />
+    <ClInclude Include="SoundEffect.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Defs.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameLevel.h" />
+    <ClInclude Include="Structure.h" />
     <ClInclude Include="PlayerObject.h" />
     <ClInclude Include="Skill.h" />
     <ClInclude Include="Texture.h" />

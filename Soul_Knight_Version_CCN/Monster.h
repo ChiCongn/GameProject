@@ -4,8 +4,6 @@
 #define THREAT_OBJECT_H
 
 #include"Common.h"
-#include"BaseObject.h"
-#include"BulletObject.h"
 #include"Defs.h"
 #include"Skill.h"
 #include<vector>
@@ -16,38 +14,46 @@ enum class TypeMonster {
 	Poison,
 	Alien,
 	Knight,
-	Boss
+	Boss,
+	None
 };
 
 class Monster{
-protected:
-	int speed = 0;
-	double angle = 0.0;
-	bool defence = false;
-	int time_wait_attack = 0, time_attack = 0;
-	int attackDistance = 0;
-	int hp , time_undead = 3;
-
-	Texture* Hp;
-	Texture* skill ;	
-	Direction direction;
 public:
-	Animation* animation;
-
 	bool isDied() const { return hp <= 0; }
 	Monster(const int width, const int height, const int health, const int clips[][4], const int frames,
 		const std::string& imageLeft, const std::string& imageRight, SDL_Renderer* renderer);
 	virtual ~Monster();
+	void render(SDL_Renderer* renderer);
 
+	void setCoordinates(int x, int y);
+	SDL_Rect getCoordinates() { return animation->getCoordinates(); }
+	SDL_Point getPosition() { return animation->getPosition(); }
 	void takeDamage(int damage);
 	void defenceStructure(const SDL_Rect& position);
-	void render(SDL_Renderer* renderer);
 	void cooldown();
+	void moveFollowMap(int x, int y);
+	void newTurn();
+
+	int calculateScore();
 
 	virtual int damageAttack(const SDL_Rect& player) = 0;
 	virtual void move(int x, int y) = 0;
 	virtual void attack(int x, int y) = 0;
-	virtual void newTurn() = 0;
+
+protected:
+	Animation* animation;
+	TypeMonster type;
+	bool is_calculate = false;
+	int speed = 0;
+	double angle = 0.0;
+	bool defence = false;
+	int attack_distance = 0;
+	int hp, time_immortality = 3;
+
+	Texture* Hp;
+	Skill* skill;
+	Direction direction;
 };
 
 
@@ -56,65 +62,76 @@ public:
 	NormalMonster() = delete;
 	NormalMonster(const NormalMonster* other) = delete;
 	NormalMonster(SDL_Renderer* renderer); 
-	//~NormalMonster();
+	~NormalMonster();
+
 	void move(int x, int y) override;
 	void attack(int x, int y) override;
 	int damageAttack(const SDL_Rect& player) override;
 
-	void newTurn() override;
 	//void render(SDL_Renderer* renderer) override;
 };
 
 class AlienMonster : public Monster {
 public:
+
 	AlienMonster(SDL_Renderer* renderer);
+	~AlienMonster();
+
 	void move(int x, int y) override;
 	void attack(int x, int y) override;
-	int damageAttack(const SDL_Rect& player) override;
 
-	void newTurn() override;
+	int damageAttack(const SDL_Rect& player) override;
 
 };
 
 class PoisonMonster : public Monster {
 public:
 	PoisonMonster(SDL_Renderer* renderer);
+	~PoisonMonster();
+
 	void move(int x, int y) override;
 	void attack(int x, int y) override;
-	//int damageAttack(const SDL_Rect& player) override;
-
-	void newTurn() override;
-	//void render(SDL_Renderer* renderer) override;
+	int damageAttack(const SDL_Rect& player) override;
 };
 
 class KnightMonster : public Monster {
-	int time_teleport = TIME_TELEPORT;
 public:
+
 	KnightMonster(SDL_Renderer* renderer); 
+	~KnightMonster();
+
 	void move(int x, int y) override;
 	void attack(int x, int y) override;
 	int damageAttack(const SDL_Rect& player) override;
 
-	void newTurn() override;
-	//void render(SDL_Renderer* renderer) override;
+private:
+	int time_teleport = TIME_TELEPORT;
 };
 
 class BossMonster : public Monster {
+public:
+
+	BossMonster(SDL_Renderer* renderer);
+	~BossMonster();
+
+	void move(int x, int y) override;
+	void attack(int x, int y) override;
+	void countdown();
+
+	int damageAttack(const SDL_Rect& player) override;
+
+	void showRender(SDL_Renderer* renderer);
+
+private:
 	int time_teleport = 10;
 	Skill* black_hole;
 	Skill* fire_explodesion;
-public:
-	BossMonster(SDL_Renderer* renderer);
-	void move(int x, int y) override;
-	void attack(int x, int y) override;
-	void blackHole(int& x, int& y);
-	void countdown();
-	int damageAttack(const SDL_Rect& player) override;
-
-	void newTurn() override;
-	void showRender(SDL_Renderer* renderer);
-	//void render(SDL_Renderer* renderer) override;
 };
 
+
+class MonsterFactory {
+public:
+	Monster* createMonster(const std::string& type, SDL_Renderer* renderer);
+};
 
 #endif

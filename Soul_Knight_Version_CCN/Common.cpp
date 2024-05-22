@@ -52,7 +52,7 @@ void waitUntilKeyPressed()
     }
 }
 
-SDL_Texture* loadImage(const std::string path, SDL_Renderer* renderer)
+SDL_Texture* loadImage(const std::string& path, SDL_Renderer* renderer)
 {
     SDL_Texture* newTexture = nullptr;
     SDL_Surface* loadedSurface = IMG_Load(path.c_str());
@@ -71,7 +71,7 @@ SDL_Texture* loadImage(const std::string path, SDL_Renderer* renderer)
     return newTexture;
 }
 
-TTF_Font* loadFont(const std::string font_path) {
+TTF_Font* loadFont(const std::string& font_path) {
     if (TTF_Init() == -1) {
         std::cout << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
         return nullptr;
@@ -85,7 +85,7 @@ TTF_Font* loadFont(const std::string font_path) {
     return font;
 }
 
-SDL_Texture* loadText(const std::string text, const SDL_Color color, const std::string fontPath, SDL_Renderer* renderer) {   
+SDL_Texture* loadText(const std::string text, const SDL_Color& color, const std::string& fontPath, SDL_Renderer* renderer) {   
     TTF_Font* font = loadFont(fontPath);
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
     if (textSurface == nullptr) {
@@ -109,7 +109,7 @@ SDL_Texture* loadText(const std::string text, const SDL_Color color, const std::
 }
 
 
-Mix_Chunk* loadAudio(std::string audioPath) {
+Mix_Chunk* loadSound(std::string sound_path) {
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
         return nullptr;
@@ -120,7 +120,7 @@ Mix_Chunk* loadAudio(std::string audioPath) {
         return nullptr;
     }
 
-    Mix_Chunk* sound = Mix_LoadWAV(audioPath.c_str());
+    Mix_Chunk* sound = Mix_LoadWAV(sound_path.c_str());
     if (sound == nullptr) {
         std::cerr << "Failed to load sound effect! SDL_mixer Error: " << Mix_GetError() << std::endl;
         return nullptr;
@@ -128,22 +128,9 @@ Mix_Chunk* loadAudio(std::string audioPath) {
     return sound;
 }
 
-void playAudio(Mix_Chunk* sound) {
-    if (sound != nullptr) {
-        Mix_PlayChannel(-1, sound, 0);
-    }
-}
 
-bool checkCollision(const SDL_Rect a, const SDL_Rect b) {
-    /*if (a.x + a.w < b.x || b.x + b.w < a.x || a.y + a.h < b.y && b.y + b.h < a.y) {
-        return false;
-    }
-    return true;*/
-    return SDL_HasIntersection(&a, &b);
-}
-
-Mix_Music* loadMusic(const char* path) {
-    Mix_Music* gMusic = Mix_LoadMUS(path);
+Mix_Music* loadMusic(const std::string& path) {
+    Mix_Music* gMusic = Mix_LoadMUS(path.c_str());
     if (gMusic == nullptr) {
         SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION,
             SDL_LOG_PRIORITY_ERROR,
@@ -151,6 +138,28 @@ Mix_Music* loadMusic(const char* path) {
     }
     return gMusic;
 }
+
+
+bool checkCollision(const SDL_Rect& a, const SDL_Rect& b) {
+    if (a.x + a.w < b.x || b.x + b.w < a.x || a.y + a.h < b.y || b.y + b.h < a.y) {
+        return false;
+    }
+    return true;
+    //return SDL_HasIntersection(&a, &b);
+}
+
+float calculateDistance(const int& x1, const int& y1, const int& x2, const int& y2) {
+    float distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    return distance;
+}
+
+
+void playAudio(Mix_Chunk* sound) {
+    if (sound != nullptr) {
+        Mix_PlayChannel(-1, sound, 0);
+    }
+}
+
 void playMusic(Mix_Music* gMusic) {
     if (gMusic == nullptr) return;
     if (Mix_PlayingMusic() == 0) {

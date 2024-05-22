@@ -3,35 +3,26 @@
 #include<string>
 
 void GameObject::initializeGame() {
-    std::cout << "start init SDL\n";
+    std::cout << "start Game init SDL\n";
     initSDL(window, renderer);
-    std::cout << "ok init window and renderer\n";
-    std::cout << " start init properties Game\n";
 
     gameState = GameState::Intro;
-    menu->initMenuGame(renderer);
-    map = loadImage(MAP_PATH, renderer);
+    menu = new MenuGame(renderer);
+    map = new Map(MAP_PATH, renderer);
 
-    time = new Texture(920, 315, 50, 35);
+    time = new Texture(1095, 450, 50, 35);
     time->setText("0", BLACK_COLOR, FONT_PATH, renderer);
     pause = new Texture(SCREEN_WIDTH/2-PAUSE_WIDTH/2, SCREEN_HEIGHT/2-PAUSE_HEIGHT/2, PAUSE_WIDTH, PAUSE_HEIGHT);
-    pause->setImageTexture(IMAGE_PAUSE_GAME_PATH, renderer);
-    highScore = takeHighScore();
-    HighScore = new Texture(880, 140, 80, 40);
-    HighScore->setText(std::to_string(highScore), RED_COLOR, FONT_PATH, renderer);
+    pause->setImageTexture(PAUSE_GAME_PATH, renderer);
     std::cout << "ok init time...\n";
 
-    tower = new Structure(2, renderer);
+    tower = new Structure * [AMOUNT_STRUCTURE];
+    for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+        tower[i] = new Structure(2, POS_X_STRUCTURE[i], POS_Y_STRUCTURE[i], renderer);
+    }
     std::cout << "ok init structure->init player*\n";
     boss = new BossMonster(renderer);
-    boss->animation->setCoordinates(600, 300);
     player = new PlayerObject(renderer);
-    std::cout << "ok init player* -> start init obstacle*\n";
-   
-    std::cout << "start init audio\n";
-    gameDefeatAudio = loadAudio(AUDIO_GAME_DEFEAT_PATH);
-    gameVictoryAudio = loadAudio(AUDIO_GAME_VICTORY_PATH);
-    gameIntroAudio = loadAudio(AUDIO_GAME_INTRO_PATH);
     std::cout << "ok initGame\n";
 }
 
@@ -41,10 +32,13 @@ GameObject::GameObject() {
 
 GameObject::~GameObject() {
     std::cout << "start destructor gameObject\n";
-    SDL_DestroyTexture(map);
+    delete map;
     std::cout << "ok delete map-> start delete player*\n";
     delete player;
     std::cout << "ok delete player*->delete bossMonster*\n";
+    delete boss;
+    std::cout << "ok delete boss -> delete structure\n";
+    delete[] tower;
     std::cout << " Destroy SDL\n";
     quitSDL(window, renderer);
     std::cout << "ok ~Game\n";
@@ -52,24 +46,17 @@ GameObject::~GameObject() {
 
 void GameObject::renderGame() {
     SDL_RenderClear(renderer);
-    if (gameState == GameState::Play) {
-        //std::cout << "start renderGame\n";
-        SDL_RenderCopy(renderer, map, NULL, NULL);
-        renderHighScore();
-
-        tower->render(renderer);
-        player->renderPlayer(renderer);
-        boss->showRender(renderer);
-        time->render(renderer);
-        /*for (int i = 0; i < 12; i++) {
-            obstacle[i].renderObstacle(renderer);
-        }*/
-    } 
-    else {
-        //std::cout << "Render menuGame\n";
-        menu->renderMenuGame(renderer, gameState);
+   
+    //std::cout << "start renderGame\n";
+    map->render(renderer);
+    for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+        tower[i]->render(renderer);
     }
-    //std::cout << "ok renderGame\n";
+    boss->showRender(renderer);
+    menu->renderMenuGame(renderer, gameState);
+    player->renderPlayer(renderer);
+    time->render(renderer);
+   
     SDL_RenderPresent(renderer);
     SDL_Delay(20);
 }
@@ -85,130 +72,38 @@ void GameObject::gamePlay() {
             }
             else if (e.type == SDL_KEYDOWN) { 
                 player->handleSlash();
-                player->handleMoveAction();
-                player->move();
-                tower->handleTakeDamage(player->slashSword->coordinates, DAMAGE_PLAYER);
+                GameObject::hadleMovement();
+                for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+                    tower[i]->handleTakeDamage(player->getCoordinatesSkill("slash_sword"), 1, DAMAGE_PLAYER);
+                }
+                if (checkCollision(player->getCoordinatesSkill("slash_sword"), boss->getCoordinates())) {
+                    boss->takeDamage(DAMAGE_PLAYER);
+                }
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                GameObject::pauseGame();
                 player->handleSkill(e);
-                tower->handleTakeDamage(player->fireBall->skill->coordinates, DAMAGE_SKILL);
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                if (x >= SCREEN_WIDTH - 50 && x <= SCREEN_WIDTH && y >= 0 && y <= 50) {      
-                    gameState = GameState::Pause;
-                    pauseGame();
-                }
             }
         } 
         GameObject::updateTime();
-
-        player->takeDamage(tower->damageAttack(player->animation->coordinates));
-        player->handleAttackMovement();
-        player->cooldown();
-
-        tower->handleAttack(player->animation->coordinates);
-        tower->handleTakeDamage(player->fireBall->skill->coordinates, DAMAGE_SKILL);
-        tower->handleMonsterMovement(player->posX, player->posY);
-        tower->regeneration();
-        tower->cooldown();
-        
-        boss->move(player->posX, player->posY);
-        boss->attack(player->posX, player->posY);
-        boss->blackHole(player->posX, player->posY);
-        boss->countdown();
+        GameObject::handlePlayer();
+        GameObject::handleBossMonster();
+        GameObject::handleStructures();
 
         renderGame();
-
-        /*if (player->isDead()) {
-            gameState = GameState::Defeat;
+        if (isOver()) {
+            GameObject::gameOver();
             GameObject::newTurn();
-        }*/
+        }
     }     
 }
 
 void GameObject::gameIntro() {
-    std::cout << "Game Intro\n";
-    while (gameState == GameState::Intro) {
-        //playAudio(gameIntroAudio);
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) {
-                std::cout << "e.type==Quit\n";
-                gameState = GameState::Quit;
-                break;
-            }
-            else if (e.type == SDL_MOUSEBUTTONDOWN) {
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                if (x >= 205 && x <= 4500) {
-                    if (y >= 70 && y <= 140) {
-                        gameState = GameState::Play;
-                        std::cout << "Play\n";
-                        return;
-                    }
-                    else if (y >= 210 && y <= 275) {
-                        gameState = GameState::Instruction;
-                        std::cout << "Game instruction\n";
-                        break;
-                    }
-                    else if (y >= 345 && y <= 410) {
-                        gameState = GameState::Quit;
-                        break;
-                    }
-                    else {
-                        ;
-                    }
-                }
-            }
-            else {
-                ;
-            }
-        }
-        renderGame();
-        while (gameState == GameState::Instruction) {
-            while (SDL_PollEvent(&e) != 0) {
-                if (e.type == SDL_QUIT) {
-                    std::cout << "e.type==Quit\n";
-                    gameState = GameState::Quit;
-                    break;
-                }
-                else if (e.type == SDL_MOUSEBUTTONDOWN) {
-                    int x, y;
-                    SDL_GetMouseState(&x, &y);
-                    if (x >= SCREEN_WIDTH-50 && x <= SCREEN_WIDTH && y >= 0 && y <= 50) {
-                        gameState = GameState::Intro;
-                        break;
-                    }
-                }
-            }
-            renderGame();
-        }
-    }
-    std::cout << "ok game intro\n";
+    menu->gameIntro(gameState, e, renderer);
 }
 
 void GameObject::gameOver() {
-    while (gameState == GameState::Victory || gameState == GameState::Defeat) {
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) {
-                std::cout << "e.type==Quit\n";
-                gameState = GameState::Quit;
-                break;
-            }
-            else if (e.type == SDL_MOUSEBUTTONDOWN) {
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-                if (x >= 370 && x <= 740 && y >= 300 && y <= 400) {
-                    gameState = GameState::Play;
-                    break;
-                }
-                else if (x>=370 && x<=740 && y>=470 && y<=570){
-                    gameState = GameState::Quit;
-                    break;
-                }
-            }
-        }
-        renderGame();
-    }   
+    menu->gameOver(gameState, e, renderer);
 }
 
 void GameObject::Running() {
@@ -220,20 +115,89 @@ void GameObject::Running() {
     } 
 }
 
-//bool GameObject::isOver() {
-//    if (boss->isDead()) {
-//        gameState = GameState::Victory;
-//        return true;
-//        //break;
-//    }
-//    if (player->isDead()) {
-//        gameState = GameState::Defeat;
-//        return true;
-//    }
-//    return false;
-//}
+bool GameObject::isOver() {
+    if (boss->isDied()) {
+        gameState = GameState::Victory;
+        return true;
+        //break;
+    }
+    if (player->isDied()) {
+        gameState = GameState::Defeat;
+        return true;
+    }
+    return false;
+}
+
+
+void GameObject::hadleMovement() {
+    player->handleMoveAction();
+    SDL_Point pos = player->getPosition();
+    SDL_Point delta = player->getDeltaPosition();
+    if (pos.x + delta.x < 96 || pos.x + delta.x + PLAYER_WIDTH > 904) {
+        int none = 0;
+        map->move(delta.x, none);
+        boss->moveFollowMap(delta.x, 0);
+        for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+            tower[i]->moveFollowMap(delta.x, 0);
+        }
+        player->setDeltaPosionsion(0, -1);
+    }
+    if (pos.y + delta.y < 96 || pos.y + delta.y > 480-PLAYER_HEIGHT) {
+        int none = 0;
+        map->move(none, delta.y);
+        boss->moveFollowMap(0, delta.y);
+        for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+            tower[i]->moveFollowMap(0, delta.y);
+        }
+        player->setDeltaPosionsion(-1, 0);
+    }
+    player->move();
+}
+
+void GameObject::handlePlayer() {
+    SDL_Rect position = player->getCoordinates();
+    player->takeDamage(boss->damageAttack(position));
+    for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+        player->takeDamage(tower[i]->damageAttack(position));
+    }
+    player->cooldown();
+    for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+        player->getScore(tower[i]->calculateScore());
+    }
+    player->getScore(boss->calculateScore());
+    player->updateScore(renderer);
+}
+
+void GameObject::handleBossMonster() {
+    if (player->getTimeActiveSkill("tornado") > 0 && checkCollision(player->getCoordinatesSkill("tornado"), boss->getCoordinates())) {
+        boss->takeDamage(DAMAGE_PLAYER);
+    }
+    if (player->getTimeActiveSkill("turbulent_slash") > 0 && checkCollision(player->getCoordinatesSkill("turbulent_slash"), boss->getCoordinates())) {
+        boss->takeDamage(DAMAGE_TURBULENT_SLASH);
+    }
+    SDL_Point pos = player->getPosition();
+    boss->move(pos.x, pos.y);
+    boss->attack(pos.x, pos.y);
+    boss->countdown();
+}
+
+void GameObject::handleStructures() {
+    for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+        tower[i]->handleAttack(player->getCoordinates());
+        tower[i]->handleTakeDamage(player->getCoordinatesSkill("turbulent_slash"), player->getTimeActiveSkill("turbulent_slash"), DAMAGE_TURBULENT_SLASH);
+        tower[i]->handleTakeDamage(player->getCoordinatesSkill("tornado"), player->getTimeActiveSkill("tornado"), DAMAGE_TORNADO);
+        tower[i]->handleMonsterMovement(player->getPosition());
+        tower[i]->regeneration();
+        tower[i]->cooldown();
+    } 
+}
 
 void GameObject::pauseGame(){
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    //std::cout << x << " " << y << std::endl;
+    if (x < SCREEN_WIDTH - 50 || y > 50) return;
+    gameState = GameState::Pause;
     pause->render(renderer);
     SDL_RenderPresent(renderer);
     while (gameState == GameState::Pause) {
@@ -245,15 +209,15 @@ void GameObject::pauseGame(){
             else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
-                if (x >= 445 && x <= 505 && y >= 335 && y <= 390) {
-                    //newTurn();
+                if (x >= 450 && x <= 510 && y >= 300 && y <= 360) {
+                    GameObject::newTurn();
                     gameState = GameState::Intro;                   
                 }
-                else if (x >= SCREEN_WIDTH/2 - PAUSE_WIDTH/2 && x <= SCREEN_WIDTH/2 + PAUSE_WIDTH/2 && y >= 0 && y <= 590) {
+                else if (x >= 565 && x <= 625 && y >= 300 && y <= 360) {
                     gameState = GameState::Play;
                     countdown();
                 }
-                else if (x >= 690 && x <= 750 && y >= 335 && y <= 390) {
+                else if (x >= 690 && x <= 750 && y >= 300 && y <= 360) {
                     gameState = GameState::Quit;
                 }
             }
@@ -263,8 +227,15 @@ void GameObject::pauseGame(){
 }
 
 void GameObject::newTurn() {
-    player->setUpNewTurn();
-    tower->newTurn();
+    map->newTurn();
+    player->saveHighScore();
+    player->newTurn();
+    for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
+        tower[i]->setCoordinates(POS_X_STRUCTURE[i], POS_Y_STRUCTURE[i]);
+        tower[i]->newTurn();
+    }
+    boss->newTurn();
+    boss->setCoordinates(2430, 1760);
 }
 
 void GameObject::updateTime() {
@@ -275,20 +246,6 @@ void GameObject::updateTime() {
     }
 }
 
-int GameObject::takeHighScore() {
-    std::ifstream inFile("HighScore.txt");
-    int getScore;
-    while (!inFile.eof()) {
-        inFile >> getScore;
-    }
-    inFile.close();
-    return getScore;
-}
-
-void GameObject::renderHighScore() {
-    HighScore->setText(std::to_string(highScore), RED_COLOR, FONT_PATH, renderer);
-    HighScore->render(renderer);
-}
 
 void GameObject::countdown() {   
     int countDown = 3;
