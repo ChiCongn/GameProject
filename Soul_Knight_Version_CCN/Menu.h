@@ -23,7 +23,6 @@ private:
 
 	SDL_Texture* notification;
 	SDL_Rect position_notification;
-
 };
 
 

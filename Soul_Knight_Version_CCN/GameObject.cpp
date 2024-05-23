@@ -15,6 +15,7 @@ void GameObject::initializeGame() {
     pause = new Texture(SCREEN_WIDTH/2-PAUSE_WIDTH/2, SCREEN_HEIGHT/2-PAUSE_HEIGHT/2, PAUSE_WIDTH, PAUSE_HEIGHT);
     pause->setImageTexture(PAUSE_GAME_PATH, renderer);
     std::cout << "ok init time...\n";
+    sounds = new SoundManager(SOUNDS, renderer);
 
     tower = new Structure * [AMOUNT_STRUCTURE];
     for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
@@ -39,6 +40,10 @@ GameObject::~GameObject() {
     delete boss;
     std::cout << "ok delete boss -> delete structure\n";
     delete[] tower;
+    delete time;
+    delete pause;
+    delete menu;
+    delete sounds;
     std::cout << " Destroy SDL\n";
     quitSDL(window, renderer);
     std::cout << "ok ~Game\n";
@@ -55,8 +60,10 @@ void GameObject::renderGame() {
     boss->showRender(renderer);
     menu->renderMenuGame(renderer, gameState);
     player->renderPlayer(renderer);
+
     time->render(renderer);
-   
+    sounds->render(renderer);
+
     SDL_RenderPresent(renderer);
     SDL_Delay(20);
 }
@@ -64,14 +71,19 @@ void GameObject::renderGame() {
 void GameObject::gamePlay() {
     startTime = SDL_GetTicks() / 1000;
     std::cout << "Game play bla bla\n";
-    while (gameState==GameState::Play) {    
+    sounds->playMusic();
+    while (gameState==GameState::Play) {  
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 gameState = GameState::Quit;
                 break;
             }
             else if (e.type == SDL_KEYDOWN) { 
+                player->handleMoveAction();
                 player->handleSlash();
+                if (player->isSlash())
+                    sounds->playSound("slash_sword_sound");
+
                 GameObject::hadleMovement();
                 for (int i = 0; i < AMOUNT_STRUCTURE; i++) {
                     tower[i]->handleTakeDamage(player->getCoordinatesSkill("slash_sword"), 1, DAMAGE_PLAYER);
@@ -81,9 +93,11 @@ void GameObject::gamePlay() {
                 }
             }
             else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                sounds->toggle(e);
                 GameObject::pauseGame();
                 player->handleSkill(e);
             }
+            
         } 
         GameObject::updateTime();
         GameObject::handlePlayer();
@@ -130,7 +144,6 @@ bool GameObject::isOver() {
 
 
 void GameObject::hadleMovement() {
-    player->handleMoveAction();
     SDL_Point pos = player->getPosition();
     SDL_Point delta = player->getDeltaPosition();
     if (pos.x + delta.x < 96 || pos.x + delta.x + PLAYER_WIDTH > 904) {
@@ -151,7 +164,7 @@ void GameObject::hadleMovement() {
         }
         player->setDeltaPosionsion(-1, 0);
     }
-    player->move();
+    player->move(map->getDelta(), map->getTileMap());
 }
 
 void GameObject::handlePlayer() {
@@ -195,9 +208,10 @@ void GameObject::handleStructures() {
 void GameObject::pauseGame(){
     int x, y;
     SDL_GetMouseState(&x, &y);
-    //std::cout << x << " " << y << std::endl;
+    std::cout << x << " " << y << std::endl;
     if (x < SCREEN_WIDTH - 50 || y > 50) return;
     gameState = GameState::Pause;
+    //sounds->toggle();
     pause->render(renderer);
     SDL_RenderPresent(renderer);
     while (gameState == GameState::Pause) {
@@ -209,15 +223,16 @@ void GameObject::pauseGame(){
             else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
-                if (x >= 450 && x <= 510 && y >= 300 && y <= 360) {
+                std::cout << x << " " << y << std::endl;
+                if (x >= 450 && x <= 510 && y >= 275 && y <= 340) {
                     GameObject::newTurn();
                     gameState = GameState::Intro;                   
                 }
-                else if (x >= 565 && x <= 625 && y >= 300 && y <= 360) {
+                else if (x >= 565 && x <= 625 && y >= 275 && y <= 340) {
                     gameState = GameState::Play;
                     countdown();
                 }
-                else if (x >= 690 && x <= 750 && y >= 300 && y <= 360) {
+                else if (x >= 690 && x <= 750 && y >= 275 && y <= 340) {
                     gameState = GameState::Quit;
                 }
             }

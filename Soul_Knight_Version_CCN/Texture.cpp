@@ -40,7 +40,6 @@ void Texture::move(int x, int y) {
 // Map=====================================================
 Map::Map(const std::string& path, SDL_Renderer* renderer) {
 	map = loadImage(MAP_PATH, renderer);
-	deltaX = deltaY = 0;
 	camera.x = camera.y = 100;
 	camera.w = 1000;
 	camera.h = SCREEN_HEIGHT;
@@ -83,11 +82,14 @@ bool Map::isBoundary() {
 }
 
 void Map::newTurn() {
-	deltaX = deltaY = 0;
 	camera.x = camera.y = 100;
 }
 
 void Map::takeTileMapMatrix() {
+	tile_map = new int* [MAP_ROW];
+	for (int i = 0; i < MAP_ROW; i++) {
+		tile_map[i] = new int[MAP_COL];
+	}
 	std::ifstream file(MATRIX_TILE_MAP_PATH);
 	if (!file.is_open()) {
 		std::cout << "Error! Can not open file: " << std::endl;

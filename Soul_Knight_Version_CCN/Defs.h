@@ -436,9 +436,12 @@ struct SoundInfo {
 
 //Mix_Chunk* grow_thorn;
 //Mix_Chunk* attack_sound;
-
-const std::string BACKGORUND_MUSIC = "./Sound\\BackgorundMusic.mp3";
-
+const std::string TOGGLE_PATH = "./Image\\ToggleSoundAndMusic.png";
+const std::string BACKGROUND_MUSIC_PATH = "./Sound\\LoveMeLikeYouDo.mp3";
+const SDL_Rect SOUND_MUSIC[] = {
+	{0, 0, 110, 108}, {110, 0, 110, 108},
+	{220, 0, 110, 108}, {330, 0, 110, 108},
+};
 const std::vector<SoundInfo> SOUNDS = {
 	{"game_intro_sound", "./Sound\\GameIntro.wav"},
 	{"game_victory_sound", "./Sound\\GameVictory.wav"},

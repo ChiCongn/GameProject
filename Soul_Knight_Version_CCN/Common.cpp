@@ -130,6 +130,15 @@ Mix_Chunk* loadSound(std::string sound_path) {
 
 
 Mix_Music* loadMusic(const std::string& path) {
+   ///* if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+   //     std::cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
+   //     return nullptr;
+   // }*/
+
+   // if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+   //     std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+   //     return nullptr;
+   // }
     Mix_Music* gMusic = Mix_LoadMUS(path.c_str());
     if (gMusic == nullptr) {
         SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION,

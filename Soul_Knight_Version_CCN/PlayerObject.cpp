@@ -57,7 +57,6 @@ void PlayerObject::renderPlayer(SDL_Renderer* renderer) {
 		slash_sword->renderAnimation(renderer, direction);
 		time_slash = TIME_WAIT_SLASH;
 		slash = false;
-		//playAudio(attackAudio);
 	}	
 	
 	turbulent_slash->render(renderer);
@@ -119,9 +118,26 @@ void PlayerObject::newTurn() {
 	posX = posY = 300;
 }
 
-void PlayerObject::move() {
+void PlayerObject::move(SDL_Point delta, int** tile_map) {
+	/*if (up) {
+		delta_y -= speed;
+	}
+	if (down) {
+		delta_y += speed;
+	}
+	if (left) {
+		delta_x -= speed;
+	}
+	if (right) {
+		delta_x += speed;
+	}*/
 	posX += delta_x;
 	posY += delta_y;
+	/*if (tile_map[(posX + delta.x)/32][(posY + delta.y)/32] > 10) {
+		std::cout << tile_map[(posX + delta.x) / 32][(posY + delta.y) / 32] << " ";
+		posX -= delta_x;
+		posY -= delta_y;
+	}*/
 	if (posX < 0)
 		posX = 0;
 	if (posX > SCREEN_WIDTH - PLAYER_WIDTH)
@@ -151,6 +167,35 @@ void PlayerObject::handleMoveAction() {
 		direction = Direction::West;
 		delta_x -= speed;
 	}
+	/*if (e.type == SDL_KEYDOWN) {
+		if (e.key.keysym.sym == SDLK_UP) {
+			up = true;
+		}
+		if (e.key.keysym.sym == SDLK_DOWN) {
+			down = true;
+		}
+		if (e.key.keysym.sym == SDLK_LEFT) {
+			left = true;
+		}
+		if (e.key.keysym.sym == SDLK_RIGHT) {
+			right = true;
+		}
+	}
+	else if (e.type == SDL_KEYUP) {
+		if (e.key.keysym.sym == SDLK_UP) {
+			up = false;
+		}
+		if (e.key.keysym.sym == SDLK_DOWN) {
+			down = false;
+		}
+		if (e.key.keysym.sym == SDLK_LEFT) {
+			left = false;
+		}
+		if (e.key.keysym.sym == SDLK_RIGHT) {
+			right = false;
+		}
+	}*/
+	
 }
 
 void PlayerObject::handleSkill(SDL_Event& e) {

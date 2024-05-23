@@ -6,6 +6,7 @@
 #include"Defs.h"
 #include<vector>
 #include<fstream>
+#include<sstream>
 
 class Texture {	
 public:	
@@ -40,14 +41,14 @@ public:
 	void newTurn();
 
 	bool isBoundary();
-	SDL_Point getDelta() { return { deltaX, deltaY }; }
+	SDL_Point getDelta() { return { camera.x, camera.y }; }
 
+	int** getTileMap() { return tile_map; }
 private:
 	SDL_Texture* map;
 	SDL_Rect camera;
-	int deltaX, deltaY;
+	int** tile_map;
 
-	int tile_map[MAP_ROW][MAP_COL];
 };
 
 #endif

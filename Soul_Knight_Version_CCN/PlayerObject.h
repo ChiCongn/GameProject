@@ -8,6 +8,7 @@
 #include<string>
 #include<fstream>
 #include"Skill.h"
+#include"SoundEffect.h"
 
 class PlayerObject {
 public:
@@ -25,7 +26,7 @@ public:
 	bool isDied() const { return hp <= 0; }
 	void renderPlayer(SDL_Renderer* renderer);
 	void newTurn();
-	void move();
+	void move(SDL_Point delta, int** tile_map);
 
 	void handleMoveAction();
 	void handleSlash();
@@ -39,7 +40,7 @@ public:
 	void updateScore(SDL_Renderer* renderer);
 	void saveHighScore();
 
-	
+	bool isSlash() { return slash; }
 private:
 	Animation* animation;
 	Animation* slash_sword;

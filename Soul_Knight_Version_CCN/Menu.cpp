@@ -68,7 +68,6 @@ void MenuGame::renderMenuGame(SDL_Renderer* renderer, const GameState& gameState
 void MenuGame::gameIntro(GameState& gameState, SDL_Event& e, SDL_Renderer* renderer) {
     std::cout << "Game Intro\n";
     while (gameState == GameState::Intro) {
-        //playAudio(gameIntroAudio);
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 std::cout << "Quit!\n";
@@ -80,17 +79,17 @@ void MenuGame::gameIntro(GameState& gameState, SDL_Event& e, SDL_Renderer* rende
                 SDL_GetMouseState(&x, &y);
                 //std::cout << x << " " << y << std::endl;
                 if (x >= 430 && x <= 750) {
-                    if (y >= 80 && y <= 155) {
+                    if (y >= 70 && y <= 145) {
                         gameState = GameState::Play;
                         std::cout << "Play\n";
                         return;
                     }
-                    else if (y >= 220 && y <= 295) {
+                    else if (y >= 200 && y <= 275) {
                         gameState = GameState::Instruction;
                         MenuGame::gameInstructions(gameState, e, renderer);
                         break;
                     }
-                    else if (y >= 370 && y <= 445) {
+                    else if (y >= 350 && y <= 425) {
                         gameState = GameState::Quit;
                         break;
                     }
@@ -160,3 +159,4 @@ void MenuGame::gameOver(GameState& gameState, SDL_Event& e, SDL_Renderer* render
         SDL_Delay(20);
     }
 }
+

@@ -42,7 +42,7 @@ private:
 
 	Uint32 startTime;
 	Uint32 currentTime;
-	//SoundManager* sounds;
+	SoundManager* sounds;
 
 	GameState gameState;
 
