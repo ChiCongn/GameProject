@@ -201,12 +201,14 @@ void PlayerObject::handleMoveAction() {
 void PlayerObject::handleSkill(SDL_Event& e) {
 	int mouseX, mouseY;
 	if (e.button.button == SDL_BUTTON_LEFT && turbulent_slash->getTimeWait() == 0) {
-		SDL_GetMouseState(&mouseX, &mouseY);	
+		SDL_GetMouseState(&mouseX, &mouseY);
+		if (mouseX > 1000) return;
 		turbulent_slash->setCoordinates(mouseX - TURBULENT_SLASH_WIDTH / 2, mouseY - TURBULENT_SLASH_HEIGHT / 2);
 		turbulent_slash->setTime(TIME_WAIT_TURBULENT_SLASH, TIME_ACTIVE_TURBULENT_SLASH);
 	}
 	if (e.button.button == SDL_BUTTON_RIGHT && tornado->getTimeWait() <=0) {
 		SDL_GetMouseState(&mouseX, &mouseY);
+		if (mouseX > 1000) return;
 		tornado->setCoordinates(mouseX-TORNADO_WIDTH/2, mouseY-TORNADO_HEIGHT/2);
 		tornado->setTime(TIME_WAIT_TORNADO, TIME_ACTIVE_TORNADO);
 	}
@@ -218,7 +220,7 @@ void PlayerObject::handleSlash() {
 		slash = true;
 	}
 	if (currentKeyStates[SDL_SCANCODE_T] && shield->getTimeWait() <= 0) {
-		shield->setCoordinates(posX - 5, posY - 5);
+		shield->setCoordinates(posX - 15, posY - 5);
 		shield->setTime(TIME_WAIT_SHIELD, TIME_ACTIVE_SHIELD);
 	}
 	if (currentKeyStates[SDL_SCANCODE_H] && healing->getTimeWait() <= 0) {

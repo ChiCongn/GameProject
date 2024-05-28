@@ -1,2 +1,24 @@
-﻿  PlayerObject.cpp
+﻿  Animation.cpp
+  Common.cpp
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Common.cpp(161,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  GameObject.cpp
+  Menu.cpp
+  Monster.cpp
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(66,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(175,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(190,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(235,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(262,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(339,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(360,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(422,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Monster.cpp(450,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  PlayerObject.cpp
+  Skill.cpp
+  SoundEffect.cpp
+  Structure.cpp
+D:\GitHub\Soul_Knight_Version_CCN\Soul_Knight_Version_CCN\Structure.cpp(108,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Texture.cpp
+  main.cpp
+  Generating Code...
   Soul_Knight_Version_CCN.vcxproj -> D:\GitHub\Soul_Knight_Version_CCN\x64\Debug\Soul_Knight_Version_CCN.exe

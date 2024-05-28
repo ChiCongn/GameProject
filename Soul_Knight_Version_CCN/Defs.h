@@ -62,10 +62,10 @@ const std::string HIGH_SCORE_PATH = "HighScore.txt";
 
 const int PLAYER_WIDTH = 40;
 const int PLAYER_HEIGHT = 45;
-const int HP_PLAYER = 10;
+const int HP_PLAYER = 100;
 const int DAMAGE_PLAYER = 2;
 const int SPEED_PLAYER = 8;
-const int TIME_IMMORTALITY = 1005;
+const int TIME_IMMORTALITY = 100;
 
 
 const int MAGICAN_CLIPS[][4] = {
@@ -100,7 +100,7 @@ const std::string IMAGE_TORNADO_SKILL_PATH = "./Image\\TornadoSkill.png";
 const int TORNADO_WIDTH = 100;
 const int TORNADO_HEIGHT = 120;
 
-const int TIME_WAIT_TORNADO = 50;
+const int TIME_WAIT_TORNADO = 200;
 const int TIME_ACTIVE_TORNADO = 10;
 const int DAMAGE_TORNADO = 2;
 
@@ -117,8 +117,8 @@ const std::string IMAGE_SHIELD_SKILL_PATH = "./Image\\ShieldSkill.png";
 const int SHIELD_WIDTH = 70;
 const int SHIELD_HEIGHT = 70;
 
-const int TIME_WAIT_SHIELD = 81;
-const int TIME_ACTIVE_SHIELD = 9;
+const int TIME_WAIT_SHIELD = 350;
+const int TIME_ACTIVE_SHIELD = 20;
 
 const int SHIELD_CLIPS[][4] = {
 	{0, 0, 157, 165}, {157, 0, 163, 165}, {320, 0, 176, 165}, {495, 0,175, 165 }, {680, 0, 185, 165},
@@ -128,10 +128,10 @@ const int SHIELD_FRAMES = sizeof(SHIELD_CLIPS) / sizeof(int) / 4;
 
 const std::string HEALING_PATH = "./Image\\Healing.png";
 const std::string IMAGE_HEALING_SKILL_PATH = "./Image\\HealingSkill.png";
-const int HEALING_WIDTH = 60;
-const int HEALING_HEIGHT = 60;
+const int HEALING_WIDTH = 50;
+const int HEALING_HEIGHT = 50;
 
-const int TIME_WAIT_HEALING = 200;
+const int TIME_WAIT_HEALING = 600;
 const int TIME_ACTIVE_HEALING = 8;
 
 const int HEALING_CLIPS[][4] = {
@@ -145,9 +145,9 @@ const std::string IMAGE_TURBULENT_SLASH_SKILL_PATH = "./Image\\TurbulentSlashSki
 const int TURBULENT_SLASH_WIDTH = 100;
 const int TURBULENT_SLASH_HEIGHT = 80;
 
-const int TIME_WAIT_TURBULENT_SLASH = 0;
+const int TIME_WAIT_TURBULENT_SLASH = 500;
 const int TIME_ACTIVE_TURBULENT_SLASH = 25;
-const int DAMAGE_TURBULENT_SLASH = 10;
+const int DAMAGE_TURBULENT_SLASH = 5;
 
 const int TURBULENT_SLASH_CLIPS[][4] = {
 	{0, 0, 228, 194}, {250, 0, 235, 194}, { 490, 0, 270, 194}, {808, 0, 255, 194}, {1100, 0, 230, 194},
@@ -183,8 +183,8 @@ const int PLAYER_SKILL_FRAMES = sizeof(PLAYER_SKILL_CLIPS) / sizeof(int) / 4;
 
 /// MONSTER ============================================================================================================================================
 const std::string IMAGE_SKILL_MONSTER_PATH = "./Image\\ImageSkillMonster.png";
-const int TIME_IMMORTALITY_MONSTER = 40;
-const int TIME_WAIT_ATTACK = 25;
+const int TIME_IMMORTALITY_MONSTER = 10;
+const int TIME_WAIT_ATTACK = 250;
 const int TIME_ATTACK = 2;
 const int TIME_TELEPORT = 2000;
 
@@ -194,8 +194,8 @@ const std::string THORN_PATH = "./Image\\ThornGrow.png";
 
 const int TOWER_WIDTH = 50;
 const int TOWER_HEIGHT = 100;
-const int HP_STRUCTURE = 30;
-const int TIME_REGENERATION = 500;
+const int HP_STRUCTURE = 50;
+const int TIME_REGENERATION = 1000;
 const int DANGEROUS_ZONE = 250;
 const int SCORE_STRUCTURE = 100;
 
@@ -206,7 +206,7 @@ const int AMOUNT_STRUCTURE = sizeof(POS_X_STRUCTURE) / sizeof(int);
 const int THORN_WIDTH = 30;
 const int THORN_HEIGHT = 50;
 const int TIME_THORN_GROW = 12;
-const int TIME_WAIT_GROW = 100;
+const int TIME_WAIT_GROW = 300;
 
 const int THORN_CLIPS[][4] = {
 	{0, 0, 152, 276}, {0, 0, 152, 276}, {152, 0, 152, 276}, {152, 0, 152, 276},
@@ -437,7 +437,7 @@ struct SoundInfo {
 //Mix_Chunk* grow_thorn;
 //Mix_Chunk* attack_sound;
 const std::string TOGGLE_PATH = "./Image\\ToggleSoundAndMusic.png";
-const std::string BACKGROUND_MUSIC_PATH = "./Sound\\LoveMeLikeYouDo.mp3";
+const std::string BACKGROUND_MUSIC_PATH = "./Sound\\BackgroundMusic.mp3";
 const SDL_Rect SOUND_MUSIC[] = {
 	{0, 0, 110, 108}, {110, 0, 110, 108},
 	{220, 0, 110, 108}, {330, 0, 110, 108},
